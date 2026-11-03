@@ -917,30 +917,43 @@ function switchServer(serverNum) {
     videoPlayer.src = embedUrl;
   }
 
-  // ডাউনলোড লিংক আপডেট
-  updateDlLinks(currentMovieId, currentMediaType);
+  // ডাউনলোড লিংক আপডেট (টাইটেলসহ)
+  const dlTitle = document.getElementById('detTitle') ? document.getElementById('detTitle').textContent : '';
+  updateDlLinks(currentMovieId, currentMediaType, dlTitle);
 }
 
 // ডাউনলোড অপশন টগল করার ফাংশন
-function toggleDlMenu(e) {
-  e.stopPropagation();
-  document.getElementById('dlMenu').classList.toggle('open');
+function toggleDlMenu() {
+  const menu = document.getElementById('dlMenu');
+  if (menu) {
+    menu.classList.toggle('open');
+  }
 }
 
-// সেট ডায়নামিক ডাউনলোড লিংক (মুভি অথবা টিভি সিরিজ অনুযায়ী আইডি সেট করার ফাংশন)
-function updateDlLinks(id, type) {
-  const l1 = document.getElementById('dlLink1');
-  const l2 = document.getElementById('dlLink2');
-  const l3 = document.getElementById('dlLink3');
+// মূল ব্যাকএন্ড লজিক: মুভি বা টিভি সিরিজের আইডি অনুযায়ী ডাইরেক্ট ডাউনলোড পেজ সেটআপ করা
+function updateDlLinks(id, type, movieTitle = '') {
+  const l1 = document.getElementById('dlLink1'); // Fast Download / Mirror 1
+  const l2 = document.getElementById('dlLink2'); // Direct Torrent / Mirror 2
+  const l3 = document.getElementById('dlLink3'); // Backup Download Link
+
+  // মুভির টাইটেলকে URL-friendly করার জন্য (যেমন: Spiderman No Way Home -> spiderman-no-way-home)
+  const slug = movieTitle ? movieTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
 
   if (type === 'tv') {
-    l1.href = `https://vidsrc.to/embed/tv/${id}/1/1`;
-    l2.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=1&e=1`;
-    l3.href = `https://embed.su/embed/tv/${id}/1/1`;
+    // টিভি সিরিজের জন্য ডাউনলোড লিংক (পপুলার ডাউনলোড সাইট বা এপিআই রিডাইরেক্ট)
+    if (l1) l1.href = `https://vidsrc.to/embed/tv/${id}/1/1`; // স্ট্রিম কাম ডাউনলোড অপশন
+    if (l2) l2.href = `https://embed.su/embed/tv/${id}/1/1`;
+    if (l3) l3.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=1&e=1`;
   } else {
-    l1.href = `https://vidsrc.to/embed/movie/${id}`;
-    l2.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
-    l3.href = `https://embed.su/embed/movie/${id}`;
+    // মুভির জন্য সেরা কার্যকরী ডাউনলোড রিডাইরেক্ট লিংকসমূহ
+    // মিরর ১: MultiEmbed সরাসরি ডাউনলোড প্রক্সি
+    if (l1) l1.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
+
+    // মিরর ২: VidSrc ডাউনলোড/প্লেয়ার পেজ
+    if (l2) l2.href = `https://vidsrc.xyz/embed/movie/${id}`;
+
+    // মিরর ৩: এক্সটার্নাল টরেন্ট বা সার্চ বেসড ডাউনলোড (যেমন YTS বা 1337x এর পরিবর্তে ডাইরেক্ট TMDB সার্চ কুয়েরি)
+    if (l3) l3.href = `https://yts.mx/movies/${slug}-${id}`; // ভিজিটর সরাসরি YTS থেকে হাই-কোয়ালিটি ডাউনলোড করতে পারবে
   }
 }
 
@@ -950,31 +963,6 @@ window.addEventListener('click', (e) => {
   const btn = document.querySelector('.dl-btn');
   if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
     menu.classList.remove('open');
-  }
-});
-
-// মুভি বা টিভির আইডি অনুযায়ী ডাউনলোড বা মিরর লিংক সেটআপ করার ফাংশন
-function updateDownloadLinks(id, type) {
-  const dlLink1 = document.getElementById('dlLink1');
-  const dlLink2 = document.getElementById('dlLink2');
-
-  if(dlLink1 && dlLink2) {
-    if (type === 'tv') {
-      dlLink1.href = `https://vidsrc.to/embed/tv/${id}/1/1`;
-      dlLink2.href = `https://embed.su/embed/tv/${id}/1/1`;
-    } else {
-      dlLink1.href = `https://vidsrc.to/embed/movie/${id}`;
-      dlLink2.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
-    }
-  }
-}
-
-// ডকুমেন্টের বাইরে ক্লিক করলে ডাউনলোড মেনু বন্ধ হয়ে যাবে
-window.addEventListener('click', function(e) {
-  const menu = document.getElementById('downloadMenu');
-  const dropdown = document.querySelector('.download-dropdown');
-  if (menu && dropdown && !dropdown.contains(e.target)) {
-    menu.classList.add('hidden');
   }
 });
 
@@ -1055,6 +1043,9 @@ async function openDetail(id, type) {
     document.getElementById('detLang').textContent = lang;
     document.getElementById('detOverview').textContent = det.overview || '';
     document.getElementById('srcMovieName').textContent = title;
+
+    // Update download links with movie title
+    updateDlLinks(currentMovieId, currentMediaType, title);
 
     // Tomatometer (use vote_average*10)
     document.getElementById('detScore').textContent = Math.round((det.vote_average || 0) * 10) + '%';
