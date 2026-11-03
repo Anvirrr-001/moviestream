@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moviestreaming - Watch Movies & TV Shows Live</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b0f19',
+                        cardBg: '#131824',
+                        accentRed: '#e50914',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0f19;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(19, 24, 36, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/10 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-8">
+                <a href="#" class="text-2xl font-bold tracking-wider text-accentRed flex items-center gap-2">
+                    <i class="fa-solid fa-play-circle"></i> MOVIESTREAMING
+                </a>
+                <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-300">
+                    <a href="#" class="text-white hover:text-accentRed transition">Home</a>
+                    <a href="#trending" class="hover:text-accentRed transition">Trending</a>
+                    <a href="#movies" class="hover:text-accentRed transition">Movies</a>
+                    <a href="#series" class="hover:text-accentRed transition">TV Series</a>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+                <!-- Search Bar -->
+                <div class="relative hidden sm:block">
+                    <input type="text" id="searchInput" placeholder="Search movies..." class="bg-black/40 border border-white/10 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-accentRed w-48 md:w-64 transition">
+                    <i class="fa-solid fa-search absolute right-4 top-2.5 text-gray-400 text-sm"></i>
+                </div>
+                <button class="bg-accentRed hover:bg-red-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition shadow-lg shadow-red-600/30">
+                    Sign In
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="flex-grow pt-20">
+        
+        <!-- Hero Section -->
+        <section class="relative h-[70vh] min-h-[500px] w-full overflow-hidden flex items-center justify-center" id="heroSection">
+            <div id="heroBg" class="absolute inset-0 bg-cover bg-center transition-all duration-700 filter brightness-50 scale-105"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/40 to-transparent"></div>
+            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center sm:text-left">
+                <span id="heroBadge" class="bg-accentRed/80 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block">Featured</span>
+                <h1 id="heroTitle" class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-4 drop-shadow-lg">Loading...</h1>
+                <p id="heroOverview" class="text-gray-300 text-sm sm:text-base max-w-2xl mb-8 line-clamp-3 drop-shadow">Loading movie collection from TMDB...</p>
+                <div class="flex flex-wrap gap-4 justify-center sm:justify-start">
+                    <button id="heroPlayBtn" class="bg-accentRed hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full flex items-center gap-3 transition shadow-xl shadow-red-600/40 text-lg">
+                        <i class="fa-solid fa-play"></i> Play Now
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Grid -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="trending">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold border-l-4 border-accentRed pl-3">Trending Movies</h2>
+                <span class="text-sm text-gray-400 hover:text-white cursor-pointer">View All</span>
+            </div>
+            <div id="trendingGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <div class="animate-pulse bg-cardBg h-80 rounded-2xl"></div>
+                <div class="animate-pulse bg-cardBg h-80 rounded-2xl"></div>
+                <div class="animate-pulse bg-cardBg h-80 rounded-2xl"></div>
+                <div class="animate-pulse bg-cardBg h-80 rounded-2xl"></div>
+                <div class="animate-pulse bg-cardBg h-80 rounded-2xl"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Streaming Modal -->
+    <div id="streamModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-3 bg-cardBg border-b border-white/10">
+                <h3 id="modalMovieTitle" class="text-lg font-bold text-white truncate">Streaming Player</h3>
+                <div class="flex items-center gap-2">
+                    <button id="server1Btn" onclick="switchServer(1)" class="bg-accentRed text-white px-3 py-1 rounded text-xs">Server 1</button>
+                    <button id="server2Btn" onclick="switchServer(2)" class="bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1 rounded text-xs">Server 2</button>
+                    <button id="closeModal" class="ml-4 text-gray-400 hover:text-white text-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Video Iframe (Sandbox Restrictions Cleared) -->
+            <div class="relative flex-grow">
+                <iframe 
+                    id="videoPlayer" 
+                    class="w-full h-full border-0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-cardBg border-t border-white/10 mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+                <a href="#" class="text-xl font-bold text-accentRed flex items-center justify-center md:justify-start gap-2">
+                    <i class="fa-solid fa-play-circle"></i> MOVIESTREAMING
+                </a>
+                <p class="text-sm text-gray-400 mt-2">Your ultimate destination for live movie streaming.</p>
+            </div>
+            <p class="text-sm text-gray-500">© 2026 Moviestreaming. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        const API_KEY = '66721a9123406bc438cf6cd6d90d5e18';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMG_URL = 'https://image.tmdb.org/t/p/original';
+
+        let currentMovieId = null;
+
+        const trendingGrid = document.getElementById('trendingGrid');
+        const heroBg = document.getElementById('heroBg');
+        const heroTitle = document.getElementById('heroTitle');
+        const heroOverview = document.getElementById('heroOverview');
+        const heroPlayBtn = document.getElementById('heroPlayBtn');
+        const streamModal = document.getElementById('streamModal');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const closeModal = document.getElementById('closeModal');
+        const modalMovieTitle = document.getElementById('modalMovieTitle');
+        const searchInput = document.getElementById('searchInput');
+
+        async function fetchTrending() {
+            try {
+                const response = await fetch(`${BASE_URL}/trending/movie/day?api_key=${API_KEY}`);
+                const data = await response.json();
+                if (data.results && data.results.length > 0) {
+                    setupHero(data.results[0]);
+                    displayMovies(data.results);
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+            }
+        }
+
+        function setupHero(movie) {
+            heroBg.style.backgroundImage = `url(${IMG_URL + movie.backdrop_path})`;
+            heroTitle.textContent = movie.title || movie.name;
+            heroOverview.textContent = movie.overview;
+            heroPlayBtn.onclick = () => openStream(movie.id, movie.title || movie.name);
+        }
+
+        function displayMovies(movies) {
+            trendingGrid.innerHTML = '';
+            movies.forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'group relative bg-cardBg rounded-2xl overflow-hidden shadow-lg hover:-translate-y-2 transition duration-300 cursor-pointer border border-white/5';
+                card.innerHTML = `
+                    <div class="aspect-[2/3] w-full overflow-hidden bg-gray-900 relative">
+                        <img src="${IMG_URL + movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                            <span class="bg-accentRed text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fa-solid fa-play ml-1"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-white truncate">${movie.title || movie.name}</h3>
+                        <div class="flex items-center justify-between text-xs text-gray-400 mt-2">
+                            <span><i class="fa-solid fa-star text-yellow-400"></i> ${movie.vote_average.toFixed(1)}</span>
+                            <span>${movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}</span>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => openStream(movie.id, movie.title || movie.name);
+                trendingGrid.appendChild(card);
+            });
+        }
+
+        function openStream(movieId, title) {
+            currentMovieId = movieId;
+            modalMovieTitle.textContent = title || 'Streaming Movie';
+            switchServer(1);
+            streamModal.classList.remove('hidden');
+            streamModal.classList.add('flex');
+        }
+
+        function switchServer(serverNum) {
+            const server1Btn = document.getElementById('server1Btn');
+            const server2Btn = document.getElementById('server2Btn');
+
+            if (serverNum === 1) {
+                videoPlayer.src = `https://vidsrc.to/embed/movie/${currentMovieId}`;
+                server1Btn.className = "bg-accentRed text-white px-3 py-1 rounded text-xs";
+                server2Btn.className = "bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1 rounded text-xs";
+            } else {
+                videoPlayer.src = `https://vidsrc.cc/v2/embed/movie/${currentMovieId}`;
+                server2Btn.className = "bg-accentRed text-white px-3 py-1 rounded text-xs";
+                server1Btn.className = "bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1 rounded text-xs";
+            }
+        }
+
+        closeModal.onclick = () => {
+            videoPlayer.src = '';
+            streamModal.classList.remove('flex');
+            streamModal.classList.add('hidden');
+        };
+
+        searchInput.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    if (data.results) {
+                        displayMovies(data.results);
+                    }
+                }
+            }
+        });
+
+        fetchTrending();
+    </script>
+</body>
+</html>
