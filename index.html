@@ -53,14 +53,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:r
 
 /* Download Dropdown CSS */
 .dl-dropdown{position:relative;display:inline-block}
-.dl-btn{display:flex;align-items:center;gap:6px;background:#1db954;color:#fff;border:none;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:"Inter",sans-serif;flex:1}
-.dl-btn:hover{background:#179b45}
-.dl-btn.dl-4k{background:#fbbf24;color:#000}
-.dl-btn.dl-4k:hover{background:#f59e0b}
-.dl-btn.dl-hd{background:#3b82f6;color:#fff}
-.dl-btn.dl-hd:hover{background:#2563eb}
-.dl-btn.dl-premium{background:#a78bfa;color:#fff}
-.dl-btn.dl-premium:hover{background:#8b5cf6}
+.dl-btn{display:flex;align-items:center;gap:6px;background:#e50914;color:#fff;border:none;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:"Inter",sans-serif;flex:1}
+.dl-btn:hover{background:#c40612}
 .dl-menu{position:absolute;right:0;top:calc(100% + 6px);width:210px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.9);display:none;z-index:200;padding:6px}
 .dl-menu.open{display:block;animation:fadeDown .2s ease}
 .dl-menu button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:8px 12px;color:#fff;background:none;border:none;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;font-family:"Inter",sans-serif}
@@ -635,9 +629,9 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
         <div class="det-actions">
           <button class="det-watch-btn" id="detWatchBtn"><i class="fa-solid fa-play"></i> Watch now</button>
           <div class="dl-row" style="margin-top:0;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="dl-btn dl-4k" onclick="handleDownload('4k')" style="flex:1"><i class="fa-solid fa-film"></i> 4K</button>
-            <button class="dl-btn dl-hd" onclick="handleDownload('hd')" style="flex:1"><i class="fa-solid fa-video"></i> HD</button>
-            <button class="dl-btn dl-premium" onclick="handleDownload('premium')" style="flex:1"><i class="fa-solid fa-star"></i> Premium</button>
+            <button class="dl-btn" onclick="handleDownload('4k')" style="flex:1"><i class="fa-solid fa-film"></i> 4K</button>
+            <button class="dl-btn" onclick="handleDownload('hd')" style="flex:1"><i class="fa-solid fa-video"></i> HD</button>
+            <button class="dl-btn" onclick="handleDownload('premium')" style="flex:1"><i class="fa-solid fa-star"></i> Premium</button>
           </div>
           <button class="det-icon-btn" id="detListBtn" title="Add to My List"><i class="fa-solid fa-plus"></i></button>
           <button class="det-icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
@@ -760,9 +754,9 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
           <div class="wg" id="watchGenres"></div>
           <div class="wov" id="watchOverview"></div>
           <div class="dl-row" style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="dl-btn dl-4k" onclick="handleDownload('4k')" style="flex:1"><i class="fa-solid fa-film"></i> Download 4K</button>
-            <button class="dl-btn dl-hd" onclick="handleDownload('hd')" style="flex:1"><i class="fa-solid fa-video"></i> Download HD</button>
-            <button class="dl-btn dl-premium" onclick="handleDownload('premium')" style="flex:1"><i class="fa-solid fa-star"></i> Download Premium</button>
+            <button class="dl-btn" onclick="handleDownload('4k')" style="flex:1"><i class="fa-solid fa-film"></i> Download 4K</button>
+            <button class="dl-btn" onclick="handleDownload('hd')" style="flex:1"><i class="fa-solid fa-video"></i> Download HD</button>
+            <button class="dl-btn" onclick="handleDownload('premium')" style="flex:1"><i class="fa-solid fa-star"></i> Download Premium</button>
           </div>
         </div>
     </div>
