@@ -489,7 +489,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
 
 <script>
 const AK='66721a9123406bc438cf6cd6d90d5e18',B='https://api.themoviedb.org/3',IW='https://image.tmdb.org/t/p/w500',IO='https://image.tmdb.org/t/p/original',IW7='https://image.tmdb.org/t/p/w780';
-let cfM=[],cfI=0,cfT=null,sId=null,sType='movie';
+let cfM=[],cfI=0,cfT=null,sId=null,sType='movie',currentMediaType='movie';
 async function api(p){const s=p.includes('?')?'&':'?';const r=await fetch(B+p+s+'api_key='+AK);return r.json()}
 function skelM(id,n){const g=document.getElementById(id);if(!g)return;g.innerHTML=Array.from({length:n},()=>'<div class="skel-c"><div class="skel skel-img"></div><div class="skel skel-l1 skel"></div><div class="skel skel-l2 skel"></div></div>').join('')}
 function skelS(id,n){const g=document.getElementById(id);if(!g)return;g.innerHTML=Array.from({length:n},()=>'<div class="skel-c"><div class="skel" style="aspect-ratio:16/9;border-radius:10px"></div><div class="skel skel-l1 skel"></div><div class="skel skel-l2 skel"></div></div>').join('')}
@@ -577,7 +577,7 @@ function renderSG(shows){
 }
 
 function openSm(id,title,type){
-  sId=id;sType=type||'movie';
+  sId=id;sType=type||'movie';currentMediaType=type||'movie';
   document.getElementById('smTtl').textContent=title;
   document.querySelectorAll('.srv-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('srv1').classList.add('on');
@@ -587,10 +587,21 @@ function openSm(id,title,type){
 }
 
 function setSrc(n){
-  const f=document.getElementById('smFrame'),id=sId,t=sType;
-  const mu=[`https://vidsrc.xyz/embed/movie/${id}`,`https://vidsrc.to/embed/movie/${id}`,`https://embed.su/embed/movie/${id}`,`https://vidsrc.cc/v2/embed/movie/${id}`,`https://autoembed.co/embed/movie/${id}`];
-  const tu=[`https://vidsrc.xyz/embed/tv/${id}`,`https://vidsrc.to/embed/tv/${id}`,`https://embed.su/embed/tv/${id}`,`https://vidsrc.cc/v2/embed/tv/${id}`,`https://autoembed.co/embed/tv/${id}`];
-  f.src=(t==='tv'?tu:mu)[n-1]||mu[0];
+  const f=document.getElementById('smFrame'),id=sId;
+  let embedUrl='';
+  if(currentMediaType==='tv'){
+    if(n===1) embedUrl=`https://vidsrc.to/embed/tv/${id}/1/1`;
+    else if(n===2) embedUrl=`https://vidsrc.cc/v2/embed/tv/${id}/1/1`;
+    else if(n===3) embedUrl=`https://embed.su/embed/tv/${id}/1/1`;
+    else if(n===4) embedUrl=`https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=1&e=1`;
+  } else {
+    if(n===1) embedUrl=`https://vidsrc.to/embed/movie/${id}`;
+    else if(n===2) embedUrl=`https://vidsrc.cc/v2/embed/movie/${id}`;
+    else if(n===3) embedUrl=`https://embed.su/embed/movie/${id}`;
+    else if(n===4) embedUrl=`https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
+    else if(n===5) embedUrl=`https://www.2embed.cc/embed/${id}`;
+  }
+  f.src=embedUrl;
 }
 
 function switchSrv(n){
