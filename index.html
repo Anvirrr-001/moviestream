@@ -712,11 +712,23 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
         <span class="watch-title" id="watchTitle">Now Playing</span>
       </div>
       <div class="server-bar">
-        <span class="server-lbl">Servers:</span>
-        <button class="srv-btn active" id="srv1" onclick="switchServer(1)">Server 1</button>
-        <button class="srv-btn" id="srv2" onclick="switchServer(2)">Server 2</button>
-        <button class="srv-btn" id="srv3" onclick="switchServer(3)">Server 3</button>
-        <button class="srv-btn" id="srv4" onclick="switchServer(4)">Server 4</button>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="server-lbl text-xs font-bold text-gray-400 uppercase">Servers:</span>
+          <button class="srv-btn active" id="srv1" onclick="switchServer(1)">Server 1 (Fast)</button>
+          <button class="srv-btn" id="srv2" onclick="switchServer(2)">Server 2 (HD)</button>
+          <button class="srv-btn" id="srv3" onclick="switchServer(3)">Server 3 (Multi)</button>
+          <button class="srv-btn" id="srv4" onclick="switchServer(4)">Server 4 (Backup)</button>
+        </div>
+
+        <div class="download-dropdown relative">
+          <button onclick="toggleDownloadMenu(event)" class="bg-accentRed hover:bg-accent2 text-white px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 transition font-family:'Inter',sans-serif">
+            <i class="fa-solid fa-download"></i> Download / Mirrors
+          </button>
+          <div id="downloadMenu" class="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-xl hidden z-50 p-1.5">
+            <a id="dlLink1" href="#" target="_blank" class="block px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 rounded">Fast Download (Server 1)</a>
+            <a id="dlLink2" href="#" target="_blank" class="block px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 rounded">Direct Torrent / Mirror</a>
+          </div>
+        </div>
       </div>
       <div class="player-wrap">
         <iframe id="videoPlayer" allowfullscreen allow="autoplay;encrypted-media;fullscreen;picture-in-picture" referrerpolicy="no-referrer"></iframe>
@@ -873,29 +885,67 @@ function switchServer(serverNum) {
     if (serverNum === 1) {
       embedUrl = `https://vidsrc.to/embed/tv/${currentMovieId}/1/1`;
     } else if (serverNum === 2) {
-      embedUrl = `https://vidsrc.cc/v2/embed/tv/${currentMovieId}/1/1`;
+      embedUrl = `https://vidsrc.xyz/embed/tv/${currentMovieId}/1/1`;
     } else if (serverNum === 3) {
       embedUrl = `https://embed.su/embed/tv/${currentMovieId}/1/1`;
     } else if (serverNum === 4) {
-      embedUrl = `https://multiembed.mov/directstream.php?video_id=${currentMovieId}&tmdb=1&s=1&e=1`;
+      embedUrl = `https://vidsrc.cc/v2/embed/tv/${currentMovieId}/1/1`;
     }
   } else {
     // মুভি হলে নিচের সার্ভারগুলো কাজ করবে
     if (serverNum === 1) {
       embedUrl = `https://vidsrc.to/embed/movie/${currentMovieId}`;
     } else if (serverNum === 2) {
-      embedUrl = `https://vidsrc.cc/v2/embed/movie/${currentMovieId}`;
+      embedUrl = `https://vidsrc.xyz/embed/movie/${currentMovieId}`;
     } else if (serverNum === 3) {
       embedUrl = `https://embed.su/embed/movie/${currentMovieId}`;
     } else if (serverNum === 4) {
-      embedUrl = `https://multiembed.mov/directstream.php?video_id=${currentMovieId}&tmdb=1`;
-    } else if (serverNum === 5) {
-      embedUrl = `https://www.2embed.cc/embed/${currentMovieId}`;
+      embedUrl = `https://vidsrc.cc/v2/embed/movie/${currentMovieId}`;
     }
   }
 
-  videoPlayer.src = embedUrl;
+  const videoPlayer = document.getElementById('videoPlayer');
+  if(videoPlayer) {
+    videoPlayer.src = embedUrl;
+  }
+
+  // ডাউনলোড লিংক আপডেট
+  updateDownloadLinks(currentMovieId, currentMediaType);
 }
+
+// ডাউনলোড অপশন টগল করার ফাংশন
+function toggleDownloadMenu(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('downloadMenu');
+  if(menu) {
+    menu.classList.toggle('hidden');
+  }
+}
+
+// মুভি বা টিভির আইডি অনুযায়ী ডাউনলোড বা মিরর লিংক সেটআপ করার ফাংশন
+function updateDownloadLinks(id, type) {
+  const dlLink1 = document.getElementById('dlLink1');
+  const dlLink2 = document.getElementById('dlLink2');
+
+  if(dlLink1 && dlLink2) {
+    if (type === 'tv') {
+      dlLink1.href = `https://vidsrc.to/embed/tv/${id}/1/1`;
+      dlLink2.href = `https://embed.su/embed/tv/${id}/1/1`;
+    } else {
+      dlLink1.href = `https://vidsrc.to/embed/movie/${id}`;
+      dlLink2.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
+    }
+  }
+}
+
+// ডকুমেন্টের বাইরে ক্লিক করলে ডাউনলোড মেনু বন্ধ হয়ে যাবে
+window.addEventListener('click', function(e) {
+  const menu = document.getElementById('downloadMenu');
+  const dropdown = document.querySelector('.download-dropdown');
+  if (menu && dropdown && !dropdown.contains(e.target)) {
+    menu.classList.add('hidden');
+  }
+});
 
 function goWatch(serverNum) {
   prevView = 'detail';
