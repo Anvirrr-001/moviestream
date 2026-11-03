@@ -35,13 +35,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:r
 
 /* Search */
 .srch-wrap{position:relative;display:flex;align-items:center}
-.srch-drop{position:absolute;right:0;top:calc(100%+8px);width:320px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;z-index:2000}
+.srch-drop{position:absolute;right:0;top:calc(100%+10px);width:340px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;z-index:2000}
 .srch-drop.open{display:block;animation:fadeDown .2s ease}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-#srchInput{background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:6px;padding:8px 12px 8px 34px;color:#fff;font-size:13px;outline:none;width:220px;font-family:"Inter",sans-serif;transition:all .2s}
+#srchInput{background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:7px;padding:10px 12px 10px 38px;color:#fff;font-size:13px;outline:none;width:230px;font-family:"Inter",sans-serif;transition:all .2s}
 #srchInput::placeholder{color:rgba(255,255,255,.35)}
-#srchInput:focus{background:var(--bg2);border-color:var(--acc);width:260px}
-.srch-input-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:13px;pointer-events:none}
+#srchInput:focus{background:var(--bg2);border-color:var(--acc);width:280px}
+.srch-input-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:14px;pointer-events:none}
 .srch-results{max-height:380px;overflow-y:auto}
 .srch-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s}
 .srch-item:hover{background:rgba(255,255,255,.06)}
@@ -495,7 +495,10 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
       <h2 class="sec-title"><span class="red-bar"></span>Latest Movies</h2>
       <button class="view-all">View All <i class="fa-solid fa-chevron-right" style="font-size:9px"></i></button>
     </div>
-    <div class="mgrid" id="latestGrid"></div>
+    <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.8px">Hollywood</div>
+    <div class="mgrid" id="latestHollywoodGrid"></div>
+    <div style="margin:18px 0 6px;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.8px">Bollywood</div>
+    <div class="mgrid" id="latestBollywoodGrid"></div>
   </div>
 
   <!-- TV SERIES -->
@@ -1286,7 +1289,8 @@ function buildTrend(movies) {
 // ===== INIT =====
 async function init() {
   // Skeletons
-  skelGrid('latestGrid', 12, false);
+  skelGrid('latestHollywoodGrid', 6, false);
+  skelGrid('latestBollywoodGrid', 6, false);
   skelGrid('topGrid', 12, false);
   skelGrid('tvGrid', 8, true);
   skelGrid('upcomingGrid', 5, false);
@@ -1316,12 +1320,20 @@ async function init() {
       buildTrend(trend.results.filter(m => m.poster_path).slice(0, 10));
     }
 
-    // Latest movies
+    // Latest movies - Hollywood (top)
     if (np?.results?.length) {
-      const g = document.getElementById('latestGrid');
+      const g = document.getElementById('latestHollywoodGrid');
       g.innerHTML = '';
-      np.results.filter(m => m.poster_path).slice(0,12).forEach(m => g.appendChild(makeMC(m,'movie',false)));
+      np.results.filter(m => m.poster_path).slice(0,6).forEach(m => g.appendChild(makeMC(m,'movie',false)));
     }
+
+    // Latest movies - Bollywood (bottom)
+    try {
+      const bolly = await api('/discover/movie?with_origin_country=IN&sort_by=popularity.desc');
+      const g = document.getElementById('latestBollywoodGrid');
+      g.innerHTML = '';
+      (bolly.results || []).filter(m => m.poster_path).slice(0,6).forEach(m => g.appendChild(makeMC(m,'movie',false)));
+    } catch(e) {}
 
     // TV
     if (tv?.results?.length) {
