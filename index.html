@@ -53,12 +53,17 @@ header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:r
 
 /* Download Dropdown CSS */
 .dl-dropdown{position:relative;display:inline-block}
-.dl-btn{display:flex;align-items:center;gap:6px;background:#1db954;color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;font-family:"Inter",sans-serif}
+.dl-btn{display:flex;align-items:center;gap:6px;background:#1db954;color:#fff;border:none;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:"Inter",sans-serif}
 .dl-btn:hover{background:#179b45}
 .dl-menu{position:absolute;right:0;top:calc(100% + 6px);width:210px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.9);display:none;z-index:200;padding:6px}
 .dl-menu.open{display:block;animation:fadeDown .2s ease}
-.dl-menu a{display:flex;align-items:center;gap:8px;padding:8px 12px;color:#fff;text-decoration:none;font-size:12px;border-radius:5px;transition:background .2s}
-.dl-menu a:hover{background:rgba(255,255,255,.08)}
+.dl-menu button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:8px 12px;color:#fff;background:none;border:none;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;font-family:"Inter",sans-serif}
+.dl-menu button:hover{background:rgba(255,255,255,.08)}
+.dl-menu button i{font-size:13px}
+.dl-menu button .text-yellow-400{color:#fbbf24}
+.dl-menu button .text-blue-400{color:#60a5fa}
+.dl-menu button .text-purple-400{color:#a78bfa}
+.dl-menu button:hover{background:rgba(229,9,20,.15)}
 
 /* Mobile nav */
 .mob-nav{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.98);flex-direction:column;align-items:center;justify-content:center;gap:28px}
@@ -623,7 +628,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
         <div class="det-overview" id="detOverview"></div>
         <div class="det-actions">
           <button class="det-watch-btn" id="detWatchBtn"><i class="fa-solid fa-play"></i> Watch now</button>
-          <button class="det-dl-btn" onclick="goDownload()"><i class="fa-solid fa-download"></i> Download</button>
+          <button class="det-dl-btn" onclick="handleDownload('hd')"><i class="fa-solid fa-download"></i> Download</button>
           <button class="det-icon-btn" id="detListBtn" title="Add to My List"><i class="fa-solid fa-plus"></i></button>
           <button class="det-icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
         </div>
@@ -732,12 +737,20 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
           <button class="srv-btn" id="srv4" onclick="switchServer(4)">Server 4 (Backup)</button>
         </div>
 
-        <div class="dl-dropdown">
-          <button class="dl-btn" onclick="toggleDlMenu(event)"><i class="fa-solid fa-download"></i> Download / Mirrors</button>
-          <div class="dl-menu" id="dlMenu">
-            <a id="dlLink1" href="#" target="_blank"><i class="fa-solid fa-file-arrow-down"></i> Mirror 1 (VidSrc)</a>
-            <a id="dlLink2" href="#" target="_blank"><i class="fa-solid fa-file-arrow-down"></i> Mirror 2 (MultiEmbed)</a>
-            <a id="dlLink3" href="#" target="_blank"><i class="fa-solid fa-file-arrow-down"></i> Mirror 3 (Embed.su)</a>
+        <div class="dl-dropdown relative inline-block">
+          <button class="dl-btn" onclick="toggleDlMenu()">
+            <i class="fa-solid fa-download"></i> Download Options <i class="fa-solid fa-chevron-down text-xs"></i>
+          </button>
+          <div class="dl-menu absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl hidden z-50 p-1.5" id="dlMenu">
+            <button onclick="handleDownload('4k')" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-red-600 rounded font-semibold transition flex items-center gap-2">
+              <i class="fa-solid fa-film text-yellow-400"></i> Download 4K
+            </button>
+            <button onclick="handleDownload('hd')" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-red-600 rounded font-semibold transition flex items-center gap-2">
+              <i class="fa-solid fa-video text-blue-400"></i> Download HD
+            </button>
+            <button onclick="handleDownload('premium')" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-red-600 rounded font-semibold transition flex items-center gap-2">
+              <i class="fa-solid fa-star text-purple-400"></i> Download Premium
+            </button>
           </div>
         </div>
       </div>
@@ -753,7 +766,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
         <h2 id="watchInfoTitle"></h2>
         <div class="wg" id="watchGenres"></div>
         <div class="wov" id="watchOverview"></div>
-        <button class="det-dl-btn" style="margin-top:12px;display:inline-flex" onclick="goDownload()"><i class="fa-solid fa-download"></i> Download Movie</button>
+        <button class="det-dl-btn" style="margin-top:12px;display:inline-flex" onclick="handleDownload('hd')"><i class="fa-solid fa-download"></i> Download Movie</button>
       </div>
     </div>
     <div class="sub-sec-head" style="margin-bottom:14px">
@@ -920,22 +933,6 @@ function switchServer(serverNum) {
   if(videoPlayer) {
     videoPlayer.src = embedUrl;
   }
-
-  // ডাউনলোড লিংক আপডেট (টাইটেলসহ)
-  const dlTitle = document.getElementById('detTitle') ? document.getElementById('detTitle').textContent : '';
-  updateDlLinks(currentMovieId, currentMediaType, dlTitle);
-}
-
-// ডাউনলোড বাটন ক্লিক করলে ডায়রেক্ট ডাউনলোড পেজে রিডাইরেক্ট
-function goDownload() {
-  const l1 = document.getElementById('dlLink1');
-  if (l1 && l1.href && l1.href !== '#') {
-    window.open(l1.href, '_blank');
-  } else {
-    updateDlLinks(currentMovieId, currentMediaType, document.getElementById('detTitle') ? document.getElementById('detTitle').textContent : '');
-    const link = document.getElementById('dlLink1');
-    if (link && link.href && link.href !== '#') window.open(link.href, '_blank');
-  }
 }
 
 // ডাউনলোড অপশন টগল করার ফাংশন
@@ -946,30 +943,34 @@ function toggleDlMenu() {
   }
 }
 
-// মূল ব্যাকএন্ড লজিক: মুভি বা টিভি সিরিজের আইডি অনুযায়ী ডাইরেক্ট ডাউনলোড পেজ সেটআপ করা
-function updateDlLinks(id, type, movieTitle = '') {
-  const l1 = document.getElementById('dlLink1'); // Fast Download / Mirror 1
-  const l2 = document.getElementById('dlLink2'); // Direct Torrent / Mirror 2
-  const l3 = document.getElementById('dlLink3'); // Backup Download Link
+// কোয়ালিটি অনুযায়ী মুভি ডাউনলোড হ্যান্ডেল করার ব্যাকএণ্ড লজিক
+function handleDownload(quality) {
+  // যদি মুভি সিলেক্ট করা না থাকে
+  if (!currentMovieId) {
+    alert('Please select a movie first!');
+    return;
+  }
 
-  // মুভির টাইটেলকে URL-friendly করার জন্য (যেমন: Spiderman No Way Home -> spiderman-no-way-home)
-  const slug = movieTitle ? movieTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+  // মুভির টাইটেলকে URL-friendly স্লাগে রূপান্তর করা (টরেন্ট বা সার্চ সাইটের জন্য দরকার হয়)
+  const movieTitleElement = document.getElementById('detTitle') || document.getElementById('watchTitle');
+  const movieTitle = movieTitleElement ? movieTitleElement.textContent.trim() : 'movie';
+  const slug = movieTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-  if (type === 'tv') {
-    // টিভি সিরিজের জন্য ডাউনলোড লিংক (পপুলার ডাউনলোড সাইট বা এপিআই রিডাইরেক্ট)
-    if (l1) l1.href = `https://vidsrc.to/embed/tv/${id}/1/1`; // স্ট্রিম কাম ডাউনলোড অপশন
-    if (l2) l2.href = `https://embed.su/embed/tv/${id}/1/1`;
-    if (l3) l3.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=1&e=1`;
-  } else {
-    // মুভির জন্য সেরা কার্যকরী ডাউনলোড রিডাইরেক্ট লিংকসমূহ
-    // মিরর ১: MultiEmbed সরাসরি ডাউনলোড প্রক্সি
-    if (l1) l1.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
+  let downloadUrl = '';
 
-    // মিরর ২: VidSrc ডাউনলোড/প্লেয়ার পেজ
-    if (l2) l2.href = `https://vidsrc.xyz/embed/movie/${id}`;
+  if (quality === '4k') {
+    downloadUrl = `https://yts.mx/movies/${slug}-${currentMovieId}`;
+  } 
+  else if (quality === 'hd') {
+    downloadUrl = `https://multiembed.mov/directstream.php?video_id=${currentMovieId}&tmdb=1`;
+  } 
+  else if (quality === 'premium') {
+    downloadUrl = `https://vidsrc.to/embed/movie/${currentMovieId}`;
+  }
 
-    // মিরর ৩: এক্সটার্নাল টরেন্ট বা সার্চ বেসড ডাউনলোড (যেমন YTS বা 1337x এর পরিবর্তে ডাইরেক্ট TMDB সার্চ কুয়েরি)
-    if (l3) l3.href = `https://yts.mx/movies/${slug}-${id}`; // ভিজিটর সরাসরি YTS থেকে হাই-কোয়ালিটি ডাউনলোড করতে পারবে
+  // নতুন ট্যাবে ডাউনলোড পেজ ওপেন হবে
+  if (downloadUrl) {
+    window.open(downloadUrl, '_blank');
   }
 }
 
