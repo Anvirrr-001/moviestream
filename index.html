@@ -1036,9 +1036,6 @@ async function openDetail(id, type) {
     document.getElementById('detOverview').textContent = det.overview || '';
     document.getElementById('srcMovieName').textContent = title;
 
-    // Update download links with movie title
-    updateDlLinks(currentMovieId, currentMediaType, title);
-
     // Tomatometer (use vote_average*10)
     document.getElementById('detScore').textContent = Math.round((det.vote_average || 0) * 10) + '%';
 
