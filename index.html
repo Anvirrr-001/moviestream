@@ -35,12 +35,16 @@ header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:r
 
 /* Search */
 .srch-wrap{position:relative}
-.srch-drop{position:absolute;right:0;top:calc(100%+10px);width:320px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;z-index:2000}
+/* Persistent search box in header */
+.srch-bar{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;transition:all .25s;width:200px}
+.srch-bar:focus-within{background:rgba(255,255,255,0.11);border-color:rgba(255,255,255,.28);width:240px}
+.srch-bar i{color:var(--mut);font-size:12px;flex-shrink:0}
+.srch-bar input{background:none;border:none;color:#fff;font-size:12px;outline:none;flex:1;font-family:"Inter",sans-serif;width:100%}
+.srch-bar input::placeholder{color:var(--mut)}
+/* Results dropdown */
+.srch-drop{position:absolute;right:0;top:calc(100%+8px);width:320px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.85);display:none;z-index:2000}
 .srch-drop.open{display:block;animation:fadeDown .2s ease}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.srch-field{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--bdr)}
-.srch-field i{color:var(--mut);font-size:13px;flex-shrink:0}
-.srch-field input{background:none;border:none;color:#fff;font-size:13px;outline:none;flex:1;font-family:"Inter",sans-serif}
 .srch-results{max-height:380px;overflow-y:auto}
 .srch-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s}
 .srch-item:hover{background:rgba(255,255,255,.06)}
@@ -373,6 +377,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
 /* Responsive */
 @media(max-width:900px){
   .main-nav{display:none}.ham-btn{display:flex}.lang-btn,.theme-btn{display:none}
+  .srch-bar{width:160px}
   .det-inner{flex-direction:column;align-items:center;text-align:center}
   .det-poster{width:180px}.det-genres,.det-stats,.det-actions,.det-score{justify-content:center}
   .det-title{font-size:28px}.info-grid{grid-template-columns:repeat(2,1fr)}
@@ -386,6 +391,8 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
 }
 @media(max-width:600px){
   .hdr-inner{padding:0 14px;gap:8px}
+  .srch-bar{width:130px}
+  .srch-bar input{font-size:11px}
   .cflow-wrap{height:300px}
   .cf-card{width:150px;height:225px}
   .cf-card.pos-r1{transform:translateX(160px) translateZ(-30px) scale(.82) rotateY(-18deg)}
@@ -401,6 +408,24 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
   .watch-det-row{flex-direction:column}
   .watch-poster{width:100px}
 }
+
+/* Scroll margin for anchor links */
+.sec, .feat-wrap { scroll-margin-top: 70px; }
+/* Button cursor fix */
+button { cursor: pointer; }
+/* Optimize coverflow rendering */
+.cflow-wrap { transform-style: preserve-3d; }
+/* Smooth image loading */
+img { transition: opacity .3s; }
+img[loading="lazy"] { opacity: 0; }
+img[loading="lazy"].loaded { opacity: 1; }
+/* Mobile search bar adjustments */
+@media(max-width:480px){
+  .srch-bar{ width: 120px; }
+  .srch-bar input{ font-size:11px; }
+  .signin-btn{ padding: 6px 12px; font-size:12px; }
+}
+
 </style>
 </head>
 <body>
@@ -418,12 +443,11 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
     </nav>
     <div class="hdr-right">
       <div class="srch-wrap" id="srchWrap">
-        <button class="icon-btn" id="srchToggle"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <div class="srch-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="srchInput" placeholder="Search movies, shows..." autocomplete="off">
+        </div>
         <div class="srch-drop" id="srchDrop">
-          <div class="srch-field">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="srchInput" placeholder="Search movies, shows..." autocomplete="off">
-          </div>
           <div class="srch-results" id="srchResults"></div>
         </div>
       </div>
@@ -577,6 +601,25 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
   </div>
 
   <!-- FOOTER IN HOME -->
+
+  <!-- HINDI / BOLLYWOOD -->
+  <div class="sec fade-in" id="hindiSec">
+    <div class="sec-head">
+      <h2 class="sec-title"><span class="red-bar"></span>Bollywood &amp; Hindi Hits</h2>
+      <button class="view-all">View All <i class="fa-solid fa-chevron-right" style="font-size:9px"></i></button>
+    </div>
+    <div class="mgrid" id="hindiGrid"></div>
+  </div>
+
+  <!-- TAMIL / TOLLYWOOD -->
+  <div class="sec fade-in" id="tamilSec">
+    <div class="sec-head">
+      <h2 class="sec-title"><span class="red-bar"></span>Tamil &amp; Telugu Blockbusters</h2>
+      <button class="view-all">View All <i class="fa-solid fa-chevron-right" style="font-size:9px"></i></button>
+    </div>
+    <div class="mgrid" id="tamilGrid"></div>
+  </div>
+
   <div id="homeFooter"></div>
 
 </div><!-- end homeView -->
@@ -1148,11 +1191,10 @@ const srchInput = document.getElementById('srchInput');
 const srchResults = document.getElementById('srchResults');
 let srchTimer;
 
-document.getElementById('srchToggle').onclick = e => {
-  e.stopPropagation();
-  srchDrop.classList.toggle('open');
-  if (srchDrop.classList.contains('open')) srchInput.focus();
-};
+// Search opens on input focus
+srchInput.addEventListener('focus', () => {
+  if (srchInput.value.trim().length >= 2) srchDrop.classList.add('open');
+});
 
 srchInput.addEventListener('input', e => {
   clearTimeout(srchTimer);
@@ -1252,19 +1294,23 @@ async function init() {
   skelGrid('upcomingGrid', 5, false);
   skelGrid('scifiGrid', 12, false);
   skelGrid('actionGrid', 12, false);
+  skelGrid('hindiGrid', 12, false);
+  skelGrid('tamilGrid', 12, false);
 
   // Footer in home
   document.getElementById('homeFooter').innerHTML = FOOTER;
 
   try {
-    const [trend, np, tv, top, up, sf, ac] = await Promise.all([
+    const [trend, np, tv, top, up, sf, ac, hindi, tamil] = await Promise.all([
       api('/trending/movie/day'),
       api('/movie/now_playing'),
       api('/tv/popular'),
       api('/movie/top_rated'),
       api('/movie/upcoming'),
       api('/discover/movie?with_genres=878&sort_by=popularity.desc'),
-      api('/discover/movie?with_genres=28&sort_by=popularity.desc')
+      api('/discover/movie?with_genres=28&sort_by=popularity.desc'),
+      api('/discover/movie?with_original_language=hi&sort_by=popularity.desc'),
+      api('/discover/movie?with_original_language=ta&sort_by=popularity.desc')
     ]);
 
     // Coverflow
@@ -1318,11 +1364,43 @@ async function init() {
       ac.results.filter(m => m.poster_path).slice(0,12).forEach(m => g.appendChild(makeMC(m,'movie',false)));
     }
 
+    // Hindi / Bollywood
+    if (hindi?.results?.length) {
+      const g = document.getElementById('hindiGrid');
+      g.innerHTML = '';
+      hindi.results.filter(m => m.poster_path).slice(0,12).forEach(m => g.appendChild(makeMC(m,'movie',false)));
+    }
+
+    // Tamil / Telugu
+    if (tamil?.results?.length) {
+      const g = document.getElementById('tamilGrid');
+      g.innerHTML = '';
+      tamil.results.filter(m => m.poster_path).slice(0,12).forEach(m => g.appendChild(makeMC(m,'movie',false)));
+    }
+
     // Re-observe fade-in
     document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 
   } catch(e) { console.error(e); }
 }
+
+
+// Lazy image fade-in
+const imgObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('loaded');
+      imgObs.unobserve(e.target);
+    }
+  });
+}, {rootMargin:'100px'});
+document.querySelectorAll('img[loading="lazy"]').forEach(img => imgObs.observe(img));
+
+// Also observe dynamically added images
+const mutObs = new MutationObserver(() => {
+  document.querySelectorAll('img[loading="lazy"]:not(.loaded)').forEach(img => imgObs.observe(img));
+});
+mutObs.observe(document.body, {childList:true, subtree:true});
 
 init();
 </script>
