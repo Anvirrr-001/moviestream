@@ -244,6 +244,8 @@ main{padding-top:60px}
 .det-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
 .det-watch-btn{display:flex;align-items:center;gap:8px;background:var(--acc);color:#fff;border:none;padding:11px 26px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;font-family:"Inter",sans-serif}
 .det-watch-btn:hover{background:var(--acc2)}
+.det-dl-btn{display:flex;align-items:center;gap:8px;background:#e50914;color:#fff;border:none;padding:11px 26px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;font-family:"Inter",sans-serif}
+.det-dl-btn:hover{background:#c40612}
 .det-icon-btn{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .2s}
 .det-icon-btn:hover{background:rgba(255,255,255,.2)}
 .det-score{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut)}
@@ -621,6 +623,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
         <div class="det-overview" id="detOverview"></div>
         <div class="det-actions">
           <button class="det-watch-btn" id="detWatchBtn"><i class="fa-solid fa-play"></i> Watch now</button>
+          <button class="det-dl-btn" onclick="goDownload()"><i class="fa-solid fa-download"></i> Download</button>
           <button class="det-icon-btn" id="detListBtn" title="Add to My List"><i class="fa-solid fa-plus"></i></button>
           <button class="det-icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
         </div>
@@ -750,6 +753,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
         <h2 id="watchInfoTitle"></h2>
         <div class="wg" id="watchGenres"></div>
         <div class="wov" id="watchOverview"></div>
+        <button class="det-dl-btn" style="margin-top:12px;display:inline-flex" onclick="goDownload()"><i class="fa-solid fa-download"></i> Download Movie</button>
       </div>
     </div>
     <div class="sub-sec-head" style="margin-bottom:14px">
@@ -920,6 +924,18 @@ function switchServer(serverNum) {
   // ডাউনলোড লিংক আপডেট (টাইটেলসহ)
   const dlTitle = document.getElementById('detTitle') ? document.getElementById('detTitle').textContent : '';
   updateDlLinks(currentMovieId, currentMediaType, dlTitle);
+}
+
+// ডাউনলোড বাটন ক্লিক করলে ডায়রেক্ট ডাউনলোড পেজে রিডাইরেক্ট
+function goDownload() {
+  const l1 = document.getElementById('dlLink1');
+  if (l1 && l1.href && l1.href !== '#') {
+    window.open(l1.href, '_blank');
+  } else {
+    updateDlLinks(currentMovieId, currentMediaType, document.getElementById('detTitle') ? document.getElementById('detTitle').textContent : '');
+    const link = document.getElementById('dlLink1');
+    if (link && link.href && link.href !== '#') window.open(link.href, '_blank');
+  }
 }
 
 // ডাউনলোড অপশন টগল করার ফাংশন
