@@ -51,6 +51,15 @@ header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:r
 .srch-info span{font-size:10px;color:var(--mut)}
 .srch-empty{padding:20px;text-align:center;font-size:12px;color:var(--mut)}
 
+/* Download Dropdown CSS */
+.dl-dropdown{position:relative;display:inline-block}
+.dl-btn{display:flex;align-items:center;gap:6px;background:#1db954;color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;font-family:"Inter",sans-serif}
+.dl-btn:hover{background:#179b45}
+.dl-menu{position:absolute;right:0;top:calc(100% + 6px);width:210px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.9);display:none;z-index:200;padding:6px}
+.dl-menu.open{display:block;animation:fadeDown .2s ease}
+.dl-menu a{display:flex;align-items:center;gap:8px;padding:8px 12px;color:#fff;text-decoration:none;font-size:12px;border-radius:5px;transition:background .2s}
+.dl-menu a:hover{background:rgba(255,255,255,.08)}
+
 /* Mobile nav */
 .mob-nav{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.98);flex-direction:column;align-items:center;justify-content:center;gap:28px}
 .mob-nav.open{display:flex;animation:fadeIn .2s ease}
@@ -720,13 +729,12 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
           <button class="srv-btn" id="srv4" onclick="switchServer(4)">Server 4 (Backup)</button>
         </div>
 
-        <div class="download-dropdown relative">
-          <button onclick="toggleDownloadMenu(event)" class="bg-accentRed hover:bg-accent2 text-white px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 transition font-family:'Inter',sans-serif">
-            <i class="fa-solid fa-download"></i> Download / Mirrors
-          </button>
-          <div id="downloadMenu" class="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-xl hidden z-50 p-1.5">
-            <a id="dlLink1" href="#" target="_blank" class="block px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 rounded">Fast Download (Server 1)</a>
-            <a id="dlLink2" href="#" target="_blank" class="block px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 rounded">Direct Torrent / Mirror</a>
+        <div class="dl-dropdown">
+          <button class="dl-btn" onclick="toggleDlMenu(event)"><i class="fa-solid fa-download"></i> Download / Mirrors</button>
+          <div class="dl-menu" id="dlMenu">
+            <a id="dlLink1" href="#" target="_blank"><i class="fa-solid fa-file-arrow-down"></i> Mirror 1 (VidSrc)</a>
+            <a id="dlLink2" href="#" target="_blank"><i class="fa-solid fa-file-arrow-down"></i> Mirror 2 (MultiEmbed)</a>
+            <a id="dlLink3" href="#" target="_blank"><i class="fa-solid fa-file-arrow-down"></i> Mirror 3 (Embed.su)</a>
           </div>
         </div>
       </div>
@@ -910,17 +918,40 @@ function switchServer(serverNum) {
   }
 
   // ডাউনলোড লিংক আপডেট
-  updateDownloadLinks(currentMovieId, currentMediaType);
+  updateDlLinks(currentMovieId, currentMediaType);
 }
 
 // ডাউনলোড অপশন টগল করার ফাংশন
-function toggleDownloadMenu(e) {
+function toggleDlMenu(e) {
   e.stopPropagation();
-  const menu = document.getElementById('downloadMenu');
-  if(menu) {
-    menu.classList.toggle('hidden');
+  document.getElementById('dlMenu').classList.toggle('open');
+}
+
+// সেট ডায়নামিক ডাউনলোড লিংক (মুভি অথবা টিভি সিরিজ অনুযায়ী আইডি সেট করার ফাংশন)
+function updateDlLinks(id, type) {
+  const l1 = document.getElementById('dlLink1');
+  const l2 = document.getElementById('dlLink2');
+  const l3 = document.getElementById('dlLink3');
+
+  if (type === 'tv') {
+    l1.href = `https://vidsrc.to/embed/tv/${id}/1/1`;
+    l2.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=1&e=1`;
+    l3.href = `https://embed.su/embed/tv/${id}/1/1`;
+  } else {
+    l1.href = `https://vidsrc.to/embed/movie/${id}`;
+    l2.href = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
+    l3.href = `https://embed.su/embed/movie/${id}`;
   }
 }
+
+// ক্লোজ ডাউনলোড ড্রপডাউন হোয়েন ক্লিকড আউটসাইড
+window.addEventListener('click', (e) => {
+  const menu = document.getElementById('dlMenu');
+  const btn = document.querySelector('.dl-btn');
+  if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
 
 // মুভি বা টিভির আইডি অনুযায়ী ডাউনলোড বা মিরর লিংক সেটআপ করার ফাংশন
 function updateDownloadLinks(id, type) {
