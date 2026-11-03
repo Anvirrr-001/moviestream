@@ -34,13 +34,14 @@ header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:r
 .ham-btn{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px}
 
 /* Search */
-.srch-wrap{position:relative}
-.srch-drop{position:absolute;right:0;top:calc(100%+10px);width:320px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;z-index:2000}
+.srch-wrap{position:relative;display:flex;align-items:center}
+.srch-drop{position:absolute;right:0;top:calc(100%+8px);width:320px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;z-index:2000}
 .srch-drop.open{display:block;animation:fadeDown .2s ease}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.srch-field{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--bdr)}
-.srch-field i{color:var(--mut);font-size:13px;flex-shrink:0}
-.srch-field input{background:none;border:none;color:#fff;font-size:13px;outline:none;flex:1;font-family:"Inter",sans-serif}
+#srchInput{background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:6px;padding:8px 12px 8px 34px;color:#fff;font-size:13px;outline:none;width:220px;font-family:"Inter",sans-serif;transition:all .2s}
+#srchInput::placeholder{color:rgba(255,255,255,.35)}
+#srchInput:focus{background:var(--bg2);border-color:var(--acc);width:260px}
+.srch-input-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:13px;pointer-events:none}
 .srch-results{max-height:380px;overflow-y:auto}
 .srch-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s}
 .srch-item:hover{background:rgba(255,255,255,.06)}
@@ -409,21 +410,18 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
   <div class="hdr-inner">
     <a href="#" class="logo" onclick="showView('home');return false"><span class="m">MOVIE</span><span class="s">STREAMING</span></a>
     <nav class="main-nav">
-      <a class="active" onclick="showView('home')">Home</a>
-      <a onclick="showView('home')">Trending</a>
-      <a onclick="showView('home')">Movies</a>
-      <a onclick="showView('home')">TV Series</a>
-      <a onclick="handleMyList()">My List</a>
-      <a>More <i class="fa-solid fa-chevron-down" style="font-size:9px"></i></a>
+      <a class="active" onclick="scrollToSec('home')">Home</a>
+      <a onclick="scrollToSec('trend')">Trending Movies</a>
+      <a onclick="scrollToSec('latest')">Movies</a>
+      <a onclick="scrollToSec('tv')">TV Series</a>
+      <a onclick="showMyList()">My List</a>
+      <a onclick="toggleMore()">More <i class="fa-solid fa-chevron-down" style="font-size:9px"></i></a>
     </nav>
     <div class="hdr-right">
       <div class="srch-wrap" id="srchWrap">
-        <button class="icon-btn" id="srchToggle"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <i class="fa-solid fa-magnifying-glass srch-input-icon"></i>
+        <input type="text" id="srchInput" placeholder="Search movies, shows..." autocomplete="off">
         <div class="srch-drop" id="srchDrop">
-          <div class="srch-field">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="srchInput" placeholder="Search movies, shows..." autocomplete="off">
-          </div>
           <div class="srch-results" id="srchResults"></div>
         </div>
       </div>
@@ -828,6 +826,25 @@ function showView(name) {
   if (name === 'home') document.querySelector('.main-nav a').classList.add('active');
 }
 
+function scrollToSec(sec) {
+  showView('home');
+  const el = document.getElementById(sec + 'Sec') || document.getElementById(sec);
+  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.main-nav a').forEach(a => a.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function showMyList() {
+  showView('home');
+  const list = JSON.parse(localStorage.getItem('ms_list') || '[]');
+  if (!list.length) { showToast('My List is empty'); return; }
+  const el = document.getElementById('latestSec');
+  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.main-nav a').forEach(a => a.classList.remove('active'));
+  event.target.classList.add('active');
+  showToast('My List: ' + list.length + ' title(s)');
+}
+
 function goBack() {
   showView(prevView === 'detail' ? 'home' : prevView);
   if (prevView === 'home') document.querySelector('.main-nav a').classList.add('active');
@@ -1170,16 +1187,17 @@ const srchInput = document.getElementById('srchInput');
 const srchResults = document.getElementById('srchResults');
 let srchTimer;
 
-document.getElementById('srchToggle').onclick = e => {
+document.getElementById('srchInput').onclick = e => {
   e.stopPropagation();
-  srchDrop.classList.toggle('open');
-  if (srchDrop.classList.contains('open')) srchInput.focus();
+  srchDrop.classList.add('open');
+  srchInput.focus();
 };
 
 srchInput.addEventListener('input', e => {
   clearTimeout(srchTimer);
   const q = e.target.value.trim();
-  if (q.length < 2) { srchResults.innerHTML = ''; return; }
+  if (q.length < 2) { srchResults.innerHTML = ''; srchDrop.classList.remove('open'); return; }
+  srchDrop.classList.add('open');
   srchTimer = setTimeout(() => doSearch(q), 350);
 });
 
