@@ -480,6 +480,20 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
   .watch-det-row{flex-direction:column}
   .watch-poster{width:100px}
 }
+
+/* ===== QUICK ACTION BUTTONS (between hero and studio) ===== */
+.qaction-wrap{max-width:400px;margin:0 auto;padding:10px 24px 4px;display:flex;flex-direction:column;gap:9px}
+.qa-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;border:none;border-radius:30px;padding:13px 20px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.6px;text-transform:uppercase;transition:transform .15s, opacity .2s;font-family:"Inter",sans-serif}
+.qa-btn:hover{transform:scale(1.02);opacity:.92}
+.qa-btn:active{transform:scale(.98)}
+.qa-btn.red{background:var(--acc);color:#fff;box-shadow:0 4px 20px rgba(229,9,20,.4)}
+.qa-btn.dark{background:#1c1c1c;color:#fff;border:1.5px solid rgba(255,255,255,.12);box-shadow:0 4px 16px rgba(0,0,0,.5)}
+.qa-btn.red2{background:linear-gradient(90deg,#c40612 0%,#e50914 100%);color:#fff;box-shadow:0 4px 20px rgba(229,9,20,.35)}
+@media(max-width:600px){
+  .qaction-wrap{max-width:100%;padding:8px 20px 2px}
+  .qa-btn{font-size:11.5px;padding:11px 16px}
+}
+
 </style>
 </head>
 <body>
@@ -539,6 +553,20 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
       </div>
     </div>
   </section>
+
+
+  <!-- QUICK ACTION BUTTONS -->
+  <div class="qaction-wrap">
+    <button class="qa-btn red" onclick="document.querySelector('.cf-card.pos-center .cf-play-btn')?.click()">
+      <i class="fa-solid fa-play"></i> WATCH FULL MOVIE IN 4K
+    </button>
+    <button class="qa-btn dark" onclick="showToast('Download feature coming soon!')">
+      <span style="font-size:16px">🐧</span> DOWNLOAD ARCHIVE (.MKV)
+    </button>
+    <button class="qa-btn red2" onclick="showToast('Direct download server coming soon!')">
+      <span style="font-size:14px">⚡</span> DIRECT DOWNLOAD SERVER (FAST) <span style="font-size:14px">⚡</span>
+    </button>
+  </div>
 
   <!-- STUDIO -->
   <div class="sec fade-in">
