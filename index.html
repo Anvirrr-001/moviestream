@@ -1047,13 +1047,8 @@ async function autoSelectBestServer(type, movieId, playNow = true) {
     showToast(best ? 'Fastest server found. Playing now!' : 'All servers unreachable, playing on first server...');
     const server = STREAM_SERVERS[type][currentServerIndex];
     if (server) loadVideo(server.url(movieId));
-  } else if (fastestIdx !== currentServerIndex) {
-    // Background recheck found a better server -> auto-switch
-    currentServerIndex = fastestIdx;
-    showToast('Found faster server, switching...');
-    const server = STREAM_SERVERS[type][currentServerIndex];
-    if (server) loadVideo(server.url(movieId));
   }
+  // Best-server auto-switch turned OFF: no background switching after play starts
 }
 
 // Pre-warm: check all servers in the background on page load so the fastest is ready before the visitor clicks
@@ -1307,14 +1302,12 @@ function goWatch(serverNum) {
   loadWatchRec(currentMovieId, currentMediaType);
   // inject footer
   document.getElementById('watchFooter').innerHTML = FOOTER;
-  // Play immediately on server 7 (2Embed) when Watch Now is clicked; TV falls back to cached/server 1
+  // Always play on Server 7 (2Embed) when Watch Now is clicked (movies); TV uses Server 1
   const servers = STREAM_SERVERS[currentMediaType];
-  const idx = currentMediaType === 'movie' && servers[6] ? 6 : (serverCache[currentMediaType] ? serverCache[currentMediaType].idx : 0);
+  const idx = currentMediaType === 'movie' && servers[6] ? 6 : 0;
   currentServerIndex = idx;
   loadVideo(servers[idx].url(currentMovieId));
   showView('watch');
-  // Re-check servers in the background for this specific movie and auto-switch if a faster one is found
-  autoSelectBestServer(currentMediaType, currentMovieId, false);
 }
 
 async function loadWatchRec(id, type) {
