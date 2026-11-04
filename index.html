@@ -1002,7 +1002,7 @@ let currentServerIndex = 0;
 let serverErrorCount = 0;
 let isTesting = false;
 
-// Probe all servers quickly and play the fastest one
+// Background server pre-check: probe all streaming servers and play the fastest one
 async function autoSelectBestServer() {
   if (isTesting) return;
   isTesting = true;
@@ -1011,35 +1011,34 @@ async function autoSelectBestServer() {
   const tested = [];
   let completed = 0;
 
-  // Probe all servers in parallel
+  // Probe all servers in parallel using fetch timing (works cross-origin for HTML video servers)
   await Promise.all(servers.map(async (srv, idx) => {
     const start = Date.now();
-    const timeout = setTimeout(() => {
-      if (tested[idx] === undefined) {
-        tested[idx] = { idx, ok: false, time: 9999 };
-        completed++;
-        if (completed === servers.length) finish();
-      }
-    }, 3500);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3500);
 
-    const img = new Image();
-    img.onload = () => {
+    try {
+      await fetch(srv.url(currentMovieId), {
+        method: 'GET',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        redirect: 'follow',
+        signal: controller.signal,
+      });
       clearTimeout(timeout);
       if (tested[idx] === undefined) {
         tested[idx] = { idx, ok: true, time: Date.now() - start };
         completed++;
         if (completed === servers.length) finish();
       }
-    };
-    img.onerror = () => {
+    } catch (e) {
       clearTimeout(timeout);
       if (tested[idx] === undefined) {
         tested[idx] = { idx, ok: false, time: 9999 };
         completed++;
         if (completed === servers.length) finish();
       }
-    };
-    img.src = srv.url(currentMovieId) + '?r=' + Date.now();
+    }
   }));
 
   function finish() {
@@ -1048,10 +1047,10 @@ async function autoSelectBestServer() {
 
     if (ok.length > 0) {
       currentServerIndex = ok[0].idx;
-      showToast('Finding best server, please wait a moment. Movie will play now!');
+      showToast('Fastest server found. Playing now!');
     } else {
       currentServerIndex = 0;
-      showToast('Testing all servers, playing on first server...');
+      showToast('All servers unreachable, playing on first server...');
     }
 
     const server = servers[currentServerIndex];
