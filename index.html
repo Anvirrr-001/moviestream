@@ -1305,6 +1305,7 @@ function goWatch(serverNum) {
   loadWatchRec(currentMovieId, currentMediaType);
   // inject footer
   document.getElementById('watchFooter').innerHTML = FOOTER;
+  showToast('Finding best server, please wait a moment. Movie will play now!');
   autoSelectBestServer();
   showView('watch');
 }
