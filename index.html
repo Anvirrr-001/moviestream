@@ -902,30 +902,28 @@ function switchServer(serverNum) {
 
   let embedUrl = '';
 
-  // সার্ভার ভেদে সবচেয়ে জনপ্রিয় ও আপডেট স্ট্রিমিং প্রোভাইডার লিংক
+  // বর্তমানের সবচেয়ে ভালো ও সচল ৪টি স্ট্রিমিং সার্ভার লিংক
   if (currentMediaType === 'tv') {
     // টিভি সিরিজ হলে সিজন ও এপিসোড সাপোর্ট সহ সার্ভার
     if (serverNum === 1) {
-      embedUrl = `https://vidsrc.to/embed/tv/${currentMovieId}/1/1`;
+      embedUrl = `https://vidsrc.me/embed/tv?tmdb=${currentMovieId}&season=1&episode=1`;
     } else if (serverNum === 2) {
-      embedUrl = `https://vidsrc.cc/v2/embed/tv/${currentMovieId}/1/1`;
+      embedUrl = `https://vidlink.pro/tv/${currentMovieId}/1/1`;
     } else if (serverNum === 3) {
       embedUrl = `https://embed.su/embed/tv/${currentMovieId}/1/1`;
     } else if (serverNum === 4) {
-      embedUrl = `https://multiembed.mov/directstream.php?video_id=${currentMovieId}&tmdb=1&s=1&e=1`;
+      embedUrl = `https://vidsrc.cc/v2/embed/tv/${currentMovieId}/1/1`;
     }
   } else {
     // মুভি হলে নিচের সার্ভারগুলো কাজ করবে
     if (serverNum === 1) {
-      embedUrl = `https://vidsrc.to/embed/movie/${currentMovieId}`;
+      embedUrl = `https://vidsrc.me/embed/movie?tmdb=${currentMovieId}`;
     } else if (serverNum === 2) {
-      embedUrl = `https://vidsrc.cc/v2/embed/movie/${currentMovieId}`;
+      embedUrl = `https://vidlink.pro/movie/${currentMovieId}`;
     } else if (serverNum === 3) {
       embedUrl = `https://embed.su/embed/movie/${currentMovieId}`;
     } else if (serverNum === 4) {
-      embedUrl = `https://multiembed.mov/directstream.php?video_id=${currentMovieId}&tmdb=1`;
-    } else if (serverNum === 5) {
-      embedUrl = `https://www.2embed.cc/embed/${currentMovieId}`;
+      embedUrl = `https://vidsrc.cc/v2/embed/movie/${currentMovieId}`;
     }
   }
 
