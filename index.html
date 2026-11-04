@@ -983,9 +983,8 @@ function triggerAd() {
 
 function countAdClick() {
   adClickCount++;
-  if (adClickCount >= adThreshold) {
-    adClickCount = 0;
-    adThreshold = 2 + Math.floor(Math.random() * 2);
+  // Show ad on EVERY click for the first 2-3 clicks
+  if (adClickCount <= adThreshold) {
     triggerAd();
   }
 }
