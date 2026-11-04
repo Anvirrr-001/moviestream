@@ -975,6 +975,9 @@ function showMyList() {
 function goBack() {
   showView(prevView === 'detail' ? 'home' : prevView);
   if (prevView === 'home') document.querySelector('.main-nav a').classList.add('active');
+  // Stop streaming when leaving watch view so no cache remains
+  const videoPlayer = document.getElementById('videoPlayer');
+  if (videoPlayer) videoPlayer.src = 'about:blank';
 }
 
 // ===== STREAMING SERVERS =====
@@ -1001,24 +1004,19 @@ const STREAM_SERVERS = {
 let currentServerIndex = 0;
 let serverErrorCount = 0;
 let isTesting = false;
+let serverCache = { movie: null, tv: null }; // { idx, time } cached fastest server per media type
 
-// Background server pre-check: probe all streaming servers and play the fastest one
-async function autoSelectBestServer() {
-  if (isTesting) return;
-  isTesting = true;
-
-  const servers = STREAM_SERVERS[currentMediaType];
+// Probe all streaming servers in parallel and return the fastest reachable one
+async function probeServers(type, movieId) {
+  const servers = STREAM_SERVERS[type];
   const tested = [];
-  let completed = 0;
 
-  // Probe all servers in parallel using fetch timing (works cross-origin for HTML video servers)
   await Promise.all(servers.map(async (srv, idx) => {
     const start = Date.now();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3500);
-
     try {
-      await fetch(srv.url(currentMovieId), {
+      await fetch(srv.url(movieId), {
         method: 'GET',
         mode: 'no-cors',
         cache: 'no-cache',
@@ -1026,37 +1024,39 @@ async function autoSelectBestServer() {
         signal: controller.signal,
       });
       clearTimeout(timeout);
-      if (tested[idx] === undefined) {
-        tested[idx] = { idx, ok: true, time: Date.now() - start };
-        completed++;
-        if (completed === servers.length) finish();
-      }
+      tested[idx] = { idx, ok: true, time: Date.now() - start };
     } catch (e) {
       clearTimeout(timeout);
-      if (tested[idx] === undefined) {
-        tested[idx] = { idx, ok: false, time: 9999 };
-        completed++;
-        if (completed === servers.length) finish();
-      }
+      tested[idx] = { idx, ok: false, time: 9999 };
     }
   }));
 
-  function finish() {
-    isTesting = false;
-    const ok = tested.filter(t => t && t.ok).sort((a, b) => a.time - b.time);
+  const ok = tested.filter(t => t && t.ok).sort((a, b) => a.time - b.time);
+  return ok.length > 0 ? ok[0] : null;
+}
 
-    if (ok.length > 0) {
-      currentServerIndex = ok[0].idx;
-      showToast('Fastest server found. Playing now!');
-    } else {
-      currentServerIndex = 0;
-      showToast('All servers unreachable, playing on first server...');
-    }
+// Background server pre-check: probe all streaming servers and cache the fastest one (runs before visitor clicks)
+async function autoSelectBestServer(type, movieId, playNow = true) {
+  const best = await probeServers(type, movieId);
+  serverCache[type] = best;
 
-    const server = servers[currentServerIndex];
-    if (!server) return;
-    loadVideo(server.url(currentMovieId));
+  if (best) {
+    currentServerIndex = best.idx;
+    if (playNow) showToast('Fastest server found. Playing now!');
+  } else {
+    currentServerIndex = 0;
+    if (playNow) showToast('All servers unreachable, playing on first server...');
   }
+
+  const server = STREAM_SERVERS[type][currentServerIndex];
+  if (!server) return;
+  if (playNow) loadVideo(server.url(movieId));
+}
+
+// Pre-warm: check all servers in the background on page load so the fastest is ready before the visitor clicks
+function preCheckAllServers() {
+  probeServers('movie', '1').then(b => { serverCache.movie = b; });
+  probeServers('tv', '1').then(b => { serverCache.tv = b; });
 }
 
 // Load video
@@ -1304,9 +1304,14 @@ function goWatch(serverNum) {
   loadWatchRec(currentMovieId, currentMediaType);
   // inject footer
   document.getElementById('watchFooter').innerHTML = FOOTER;
-  showToast('Finding best server, please wait a moment. Movie will play now!');
-  autoSelectBestServer();
+  // Play immediately on cached fastest server (no waiting for visitor)
+  const cached = serverCache[currentMediaType];
+  const idx = cached ? cached.idx : 0;
+  currentServerIndex = idx;
+  loadVideo(STREAM_SERVERS[currentMediaType][idx].url(currentMovieId));
   showView('watch');
+  // Re-check servers in the background for this specific movie and keep fastest cached
+  autoSelectBestServer(currentMediaType, currentMovieId, false);
 }
 
 async function loadWatchRec(id, type) {
@@ -1690,6 +1695,9 @@ async function init() {
 
   // Footer in home
   document.getElementById('homeFooter').innerHTML = FOOTER;
+
+  // Background server pre-check: find fastest server before visitor clicks any movie
+  preCheckAllServers();
 
   try {
     const [trend, np, tv, top, up, sf, ac] = await Promise.all([
