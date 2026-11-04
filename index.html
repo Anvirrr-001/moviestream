@@ -906,9 +906,9 @@ function switchServer(serverNum) {
   if (currentMediaType === 'tv') {
     // টিভি সিরিজ হলে সিজন ও এপিসোড সাপোর্ট সহ সার্ভার
     if (serverNum === 1) {
-      embedUrl = `https://vidsrc.me/embed/tv?tmdb=${currentMovieId}&season=1&episode=1`;
-    } else if (serverNum === 2) {
       embedUrl = `https://vidlink.pro/tv/${currentMovieId}/1/1`;
+    } else if (serverNum === 2) {
+      embedUrl = `https://vidsrc.me/embed/tv?tmdb=${currentMovieId}&season=1&episode=1`;
     } else if (serverNum === 3) {
       embedUrl = `https://embed.su/embed/tv/${currentMovieId}/1/1`;
     } else if (serverNum === 4) {
@@ -917,9 +917,9 @@ function switchServer(serverNum) {
   } else {
     // মুভি হলে নিচের সার্ভারগুলো কাজ করবে
     if (serverNum === 1) {
-      embedUrl = `https://vidsrc.me/embed/movie?tmdb=${currentMovieId}`;
-    } else if (serverNum === 2) {
       embedUrl = `https://vidlink.pro/movie/${currentMovieId}`;
+    } else if (serverNum === 2) {
+      embedUrl = `https://vidsrc.me/embed/movie?tmdb=${currentMovieId}`;
     } else if (serverNum === 3) {
       embedUrl = `https://embed.su/embed/movie/${currentMovieId}`;
     } else if (serverNum === 4) {
