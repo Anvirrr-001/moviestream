@@ -992,7 +992,7 @@ function countAdClick() {
 
 // Global click listener: count every button/link click and show ad every 2-3 clicks
 document.addEventListener('click', (e) => {
-  const btn = e.target.closest('button, a[onclick], .qa-btn, .dl-btn, .src-btn, .srv-btn, .det-watch-btn, .cf-play-btn, .feat-cta, .view-all');
+  const btn = e.target.closest('button, a');
   if (btn) countAdClick();
 });
 
