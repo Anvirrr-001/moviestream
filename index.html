@@ -80,29 +80,41 @@ header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:r
 .dl-menu button .text-purple-400{color:#a78bfa}
 .dl-menu button:hover{background:rgba(229,9,20,.15)}
 
-/* Download Modal */
-#downloadModal{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px}
-#downloadModal.open{display:flex}
-.dl-modal-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.8);animation:dlModalUp .3s ease}
-@keyframes dlModalUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.dl-modal-header{padding:20px 24px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
-.dl-modal-header h3{font-size:18px;font-weight:800;color:#fff;margin:0}
-.dl-modal-close{background:transparent;border:none;color:var(--mut);font-size:20px;cursor:pointer;padding:6px;border-radius:6px}
-.dl-modal-close:hover{color:#fff;background:rgba(255,255,255,.1)}
-.dl-modal-body{padding:24px}
-.dl-modal-poster{width:90px;height:135px;border-radius:10px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.5);margin-bottom:16px;background:var(--bg3)}
-.dl-modal-info{text-align:center;margin-bottom:20px}
-.dl-modal-title{font-size:20px;font-weight:800;color:#fff;margin:0 0 6px}
-.dl-modal-year{font-size:13px;color:var(--mut)}
-.dl-modal-section{margin-bottom:20px}
-.dl-modal-section h4{font-size:13px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
-.dl-quality-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.dl-quality-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;color:#fff;text-decoration:none;font-size:13px;font-weight:700;transition:all .2s;cursor:pointer}
-.dl-quality-btn:hover{border-color:var(--acc);background:rgba(229,9,20,.1);transform:translateX(4px)}
-.dl-quality-btn i{font-size:14px;color:var(--acc);flex-shrink:0}
-.dl-quality-btn .q-size{font-size:11px;color:var(--mut);font-weight:500;margin-left:auto}
-.dl-modal-footer{padding:16px 24px;border-top:1px solid var(--bdr);text-align:center}
-.dl-modal-disclaimer{font-size:11px;color:var(--mut);margin:0}
+/* Download Portal View */
+.download-view{background:var(--bg);min-height:100vh}
+.dp-backdrop{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;filter:blur(20px) brightness(.25);transform:scale(1.05)}
+.dp-hero{position:relative;z-index:2;padding:60px 24px 30px;max-width:1440px;margin:0 auto}
+.dp-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:24px}
+.dp-back-btn{background:rgba(255,255,255,.06);border:1px solid var(--bdr);color:#fff;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s}
+.dp-back-btn:hover{background:var(--acc);border-color:var(--acc)}
+.dp-poster-box{position:relative;width:200px;height:300px;flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.dp-poster-box img{width:100%;height:100%;object-fit:cover}
+.dp-poster-badge{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.6);color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;border:1px solid rgba(255,255,255,.3)}
+.dp-info{flex:1}
+.dp-meta{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.dp-meta span{font-size:12px;color:var(--mut);background:rgba(255,255,255,.06);padding:4px 10px;border-radius:20px;border:1px solid var(--bdr)}
+.dp-title{font-size:32px;font-weight:900;color:#fff;margin:0 0 10px;line-height:1.15}
+.dp-tagline{font-size:14px;color:var(--mut);font-style:italic;margin-bottom:16px}
+.dp-overview{font-size:14px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:24px;max-width:700px}
+.dp-section{margin-bottom:28px}
+.dp-section h3{font-size:15px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.dp-servers{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.dp-server-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:18px;display:flex;align-items:center;gap:14px;transition:all .25s;cursor:pointer}
+.dp-server-card:hover{border-color:var(--acc);transform:translateY(-3px);box-shadow:0 15px 40px rgba(229,9,20,.15)}
+.dp-server-icon{width:44px;height:44px;background:rgba(229,9,20,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--acc);font-size:18px;flex-shrink:0}
+.dp-server-info{flex:1}
+.dp-server-name{font-size:15px;font-weight:800;color:#fff;display:block;margin-bottom:4px}
+.dp-server-desc{font-size:11px;color:var(--mut);display:block}
+.dp-server-arrow{font-size:12px;color:var(--mut)}
+.dp-qualities{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.dp-quality-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:16px;text-align:center;transition:all .2s;cursor:pointer}
+.dp-quality-card:hover{border-color:var(--acc);background:rgba(229,9,20,.08);transform:translateY(-2px)}
+.dp-quality-icon{font-size:24px;color:var(--acc);margin-bottom:8px;display:block}
+.dp-quality-name{font-size:13px;font-weight:800;color:#fff;display:block;margin-bottom:4px}
+.dp-quality-size{font-size:11px;color:var(--mut)}
+.dp-divider{height:1px;background:var(--bdr);margin:24px 0}
+.download-view .btn-download{width:100%;background:var(--acc);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+.download-view .btn-download:hover{background:var(--acc2)}
 
 /* Mobile nav */
 .mob-nav{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.98);flex-direction:column;align-items:center;justify-content:center;gap:28px}
@@ -668,9 +680,9 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
         <div class="det-actions">
           <button class="det-watch-btn" id="detWatchBtn"><i class="fa-solid fa-play"></i> Watch now</button>
           <div class="dl-row" style="margin-top:0;width:100%">
-            <button class="dl-btn dl-yts" onclick="openDownloadModal('yts')"><i class="fa-solid fa-download"></i><span class="dl-label">YTS Download</span><span class="dl-badge">HD</span></button>
-            <button class="dl-btn dl-torrent" onclick="openDownloadModal('torrent')"><i class="fa-solid fa-magnet"></i><span class="dl-label">Torrent Search</span><span class="dl-badge">P2P</span></button>
-            <button class="dl-btn dl-stream" onclick="openDownloadModal('stream')"><i class="fa-solid fa-play"></i><span class="dl-label">Stream / Mirror</span><span class="dl-badge">HD</span></button>
+            <button class="dl-btn dl-yts" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-download"></i><span class="dl-label">YTS Download</span><span class="dl-badge">HD</span></button>
+            <button class="dl-btn dl-torrent" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-magnet"></i><span class="dl-label">Torrent Search</span><span class="dl-badge">P2P</span></button>
+            <button class="dl-btn dl-stream" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-play"></i><span class="dl-label">Stream / Mirror</span><span class="dl-badge">HD</span></button>
           </div>
           <button class="det-icon-btn" id="detListBtn" title="Add to My List"><i class="fa-solid fa-plus"></i></button>
           <button class="det-icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
@@ -793,9 +805,9 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
           <div class="wg" id="watchGenres"></div>
           <div class="wov" id="watchOverview"></div>
           <div class="dl-row" style="margin-top:14px;width:100%">
-            <button class="dl-btn dl-yts" onclick="openDownloadModal('yts')"><i class="fa-solid fa-download"></i><span class="dl-label">YTS Download</span><span class="dl-badge">HD</span></button>
-            <button class="dl-btn dl-torrent" onclick="openDownloadModal('torrent')"><i class="fa-solid fa-magnet"></i><span class="dl-label">Torrent Search</span><span class="dl-badge">P2P</span></button>
-            <button class="dl-btn dl-stream" onclick="openDownloadModal('stream')"><i class="fa-solid fa-play"></i><span class="dl-label">Stream / Mirror</span><span class="dl-badge">HD</span></button>
+            <button class="dl-btn dl-yts" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-download"></i><span class="dl-label">YTS Download</span><span class="dl-badge">HD</span></button>
+            <button class="dl-btn dl-torrent" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-magnet"></i><span class="dl-label">Torrent Search</span><span class="dl-badge">P2P</span></button>
+            <button class="dl-btn dl-stream" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-play"></i><span class="dl-label">Stream / Mirror</span><span class="dl-badge">HD</span></button>
           </div>
         </div>
     </div>
@@ -812,28 +824,39 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
 <button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
 <div class="toast" id="toast"></div>
 
-<!-- Download Modal -->
-<div id="downloadModal">
-  <div class="dl-modal-box">
-    <div class="dl-modal-header">
-      <h3>Download Options</h3>
-      <button class="dl-modal-close" onclick="closeDownloadModal()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="dl-modal-body">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
-        <img id="dlModalPoster" class="dl-modal-poster" src="" alt="">
-        <div class="dl-modal-info">
-          <h2 class="dl-modal-title" id="dlModalTitle">Movie Title</h2>
-          <div class="dl-modal-year" id="dlModalYear">2024</div>
-        </div>
+<!-- Download Portal View -->
+<div class="view download-view" id="downloadView">
+  <div class="dp-backdrop" id="dpBackdrop"></div>
+  <div class="dp-hero">
+    <div class="dp-header">
+      <button class="dp-back-btn" onclick="goBackToDetail()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="dp-poster-box">
+        <img id="dpPoster" src="" alt="">
+        <div class="dp-poster-badge" id="dpBadge">HD</div>
       </div>
-      <div class="dl-modal-section">
-        <h4><i class="fa-solid fa-download"></i> Select Quality</h4>
-        <div class="dl-quality-grid" id="dlQualityGrid"></div>
+      <div class="dp-info">
+        <div class="dp-meta" id="dpMeta"></div>
+        <h1 class="dp-title" id="dpTitle">Movie Title</h1>
+        <div class="dp-tagline" id="dpTagline"></div>
+        <div class="dp-overview" id="dpOverview"></div>
       </div>
     </div>
-    <div class="dl-modal-footer">
-      <p class="dl-modal-disclaimer">Download links open in a new tab. File sizes are approximate.</p>
+
+    <div class="dp-section">
+      <h3><i class="fa-solid fa-download"></i> Download Servers</h3>
+      <div class="dp-servers" id="dpServers"></div>
+    </div>
+
+    <div class="dp-section">
+      <h3><i class="fa-solid fa-video"></i> Quality Options</h3>
+      <div class="dp-qualities" id="dpQualities"></div>
+    </div>
+
+    <div class="dp-divider"></div>
+
+    <div class="dp-section">
+      <h3><i class="fa-solid fa-circle-info"></i> Movie Info</h3>
+      <div class="dp-info-grid" id="dpInfoGrid"></div>
     </div>
   </div>
 </div>
@@ -989,58 +1012,165 @@ function switchServer(serverNum) {
 }
 
 
-// ৩টি সেরা ডাউনলোড সিস্টেম হ্যান্ডেল করার ব্যাকএন্ড লজিক - মডাল ওপেন করে কোয়ালিটি ভিত্তিক লিঙ্ক দেখায়
-function openDownloadModal(service) {
-  if (!currentMovieId) {
+// ডাউনলোড পোর্টাল ওপেন করা - মুভির তথ্য সহ ডাউনলোড সার্ভার ও কোয়ালিটি অপশন দেখানো
+function openDownloadPortal(id, type) {
+  if (!id) {
     alert('দয়াকরি প্রথনে একটা মুভি সিলেক্ট করুন!');
     return;
   }
 
+  currentMovieId = id;
+  currentMediaType = type || 'movie';
+
   const movieTitleElement = document.getElementById('detTitle') || document.getElementById('watchTitle');
-  const movieTitle = movieTitleElement ? movieTitleElement.textContent.trim() : 'movie';
+  const movieTitle = movieTitleElement ? movieTitleElement.textContent.trim() : 'Movie';
   const movieYearElement = document.getElementById('detYear') || document.getElementById('watchYear');
   const movieYear = movieYearElement ? movieYearElement.textContent.trim() : '';
+  const movieRatingElement = document.getElementById('detRating') || document.getElementById('watchRating');
+  const movieRating = movieRatingElement ? movieRatingElement.textContent.trim() : 'N/A';
+  const movieRuntimeElement = document.getElementById('detRuntime') || document.getElementById('watchRuntime');
+  const movieRuntime = movieRuntimeElement ? movieRuntimeElement.textContent.trim() : 'N/A';
+  const movieLangElement = document.getElementById('detLang') || document.getElementById('watchLang');
+  const movieLang = movieLangElement ? movieLangElement.textContent.trim() : 'N/A';
   const moviePosterElement = document.getElementById('detPoster') || document.getElementById('watchPosterImg');
   const moviePoster = moviePosterElement ? moviePosterElement.src : '';
+  const movieOverviewElement = document.getElementById('detOverview') || document.getElementById('watchOverview');
+  const movieOverview = movieOverviewElement ? movieOverviewElement.textContent.trim() : 'কোনো বিবরণ উপলব্ধ নেই।';
+  const movieTaglineElement = document.getElementById('detTagline');
+  const movieTagline = movieTaglineElement ? movieTaglineElement.textContent.trim() : '';
+  const movieGenresElement = document.getElementById('detGenres');
+  const movieGenres = movieGenresElement ? movieGenresElement.innerHTML : '';
 
+  // পোর্টালের তথ্য সেট করা
+  document.getElementById('dpBackdrop').style.backgroundImage = moviePoster ? `url('${moviePoster}')` : '';
+  document.getElementById('dpPoster').src = moviePoster;
+  document.getElementById('dpTitle').textContent = movieTitle;
+  document.getElementById('dpTagline').textContent = movieTagline || '';
+  document.getElementById('dpOverview').textContent = movieOverview;
+
+  // মেটা ডেটা
+  const metaHtml = `
+    <span>${movieRating}/10</span>
+    <span>${movieYear}</span>
+    <span>${movieRuntime}</span>
+    <span>${movieLang}</span>
+  `;
+  document.getElementById('dpMeta').innerHTML = metaHtml;
+
+  // ইन्फো গ্রিড
+  const infoHtml = `
+    <div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:12px">
+      <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">রিলিজ</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">${movieYear}</div>
+      </div>
+      <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">রানটাইম</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">${movieRuntime}</div>
+      </div>
+      <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">ভাষা</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">${movieLang}</div>
+      </div>
+      <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">রেটিং</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">${movieRating}/10</div>
+      </div>
+    </div>
+    <div style="background:var(--bg3);padding:14px;border-radius:10px;border:1px solid var(--bdr)">
+      <div style="font-size:11px;color:var(--mut);text-transform:uppercase;margin-bottom:8px">শ্রেণি</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">${movieGenres}</div>
+    </div>
+  `;
+  document.getElementById('dpInfoGrid').innerHTML = infoHtml;
+
+  // ডাউনলোড সার্ভারগুলো
+  const serversHtml = `
+    <div class="dp-server-card" onclick="gotoDownload('yts')">
+      <div class="dp-server-icon"><i class="fa-solid fa-download"></i></div>
+      <div class="dp-server-info">
+        <span class="dp-server-name">YTS Movies</span>
+        <span class="dp-server-desc">সেরা কোয়ালিটি টরেন্ট ডাউনলোড</span>
+      </div>
+      <span class="dp-server-arrow">→</span>
+    </div>
+    <div class="dp-server-card" onclick="gotoDownload('1337x')">
+      <div class="dp-server-icon"><i class="fa-solid fa-magnet"></i></div>
+      <div class="dp-server-info">
+        <span class="dp-server-name">1337x Torrent</span>
+        <span class="dp-server-desc">বড় টরেন্ট সার্চ পোর্টাল</span>
+      </div>
+      <span class="dp-server-arrow">→</span>
+    </div>
+    <div class="dp-server-card" onclick="gotoDownload('stream')">
+      <div class="dp-server-icon"><i class="fa-solid fa-play"></i></div>
+      <div class="dp-server-info">
+        <span class="dp-server-name">MultiEmbed Mirror</span>
+        <span class="dp-server-desc">ডাইরেক্ট স্ট্রিম অথবা ডাউনলোড</span>
+      </div>
+      <span class="dp-server-arrow">→</span>
+    </div>
+    <div class="dp-server-card" onclick="gotoDownload('yts')">
+      <div class="dp-server-icon"><i class="fa-solid fa-video"></i></div>
+      <div class="dp-server-info">
+        <span class="dp-server-name">YTS 4K</span>
+        <span class="dp-server-desc">আলট্রা এইচডি মুভি ফাইল</span>
+      </div>
+      <span class="dp-server-arrow">→</span>
+    </div>
+  `;
+  document.getElementById('dpServers').innerHTML = serversHtml;
+
+  // কোয়ালিটি অপশনগুলো
   const slug = movieTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const qualitiesHtml = `
+    <div class="dp-quality-card" onclick="gotoQuality('yts', '${slug}')">
+      <span class="dp-quality-icon"><i class="fa-solid fa-video"></i></span>
+      <span class="dp-quality-name">4K Ultra HD</span>
+      <span class="dp-quality-size">8-12 GB • HDR</span>
+    </div>
+    <div class="dp-quality-card" onclick="gotoQuality('1337x', '${slug}')">
+      <span class="dp-quality-icon"><i class="fa-solid fa-hd"></i></span>
+      <span class="dp-quality-name">1080p Full HD</span>
+      <span class="dp-quality-size">2-4 GB • BluRay</span>
+    </div>
+    <div class="dp-quality-card" onclick="gotoQuality('stream', '${currentMovieId}')">
+      <span class="dp-quality-icon"><i class="fa-solid fa-play"></i></span>
+      <span class="dp-quality-name">720p HD</span>
+      <span class="dp-quality-size">1-2 GB • WebDL</span>
+    </div>
+    <div class="dp-quality-card" onclick="gotoQuality('yts', '${slug}')">
+      <span class="dp-quality-icon"><i class="fa-solid fa-film"></i></span>
+      <span class="dp-quality-name">480p SD</span>
+      <span class="dp-quality-size">300-700 MB • WEB</span>
+    </div>
+  `;
+  document.getElementById('dpQualities').innerHTML = qualitiesHtml;
 
-  // মডালে মুভি তথ্য সেট করা
-  document.getElementById('dlModalPoster').src = moviePoster;
-  document.getElementById('dlModalTitle').textContent = movieTitle;
-  document.getElementById('dlModalYear').textContent = movieYear || 'N/A';
+  // পোর্টালビュー দেখানো
+  showView('download');
+}
 
-  // কোয়ালিটি ভিত্তিক ডাউনলোড লিঙ্ক তৈরি করা
-  const qualityGrid = document.getElementById('dlQualityGrid');
-  qualityGrid.innerHTML = '';
+// ডাউনলোড পোর্টাল বন্ধ করা আর ডিটেইল পেজে ফিরে যাওয়া
+function goBackToDetail() {
+  showView('detail');
+}
 
-  const qualities = [
-    { name: '4K Ultra HD', size: '8-12 GB', icon: 'fa-video', service: 'yts', color: '#f59e0b' },
-    { name: '1080p Full HD', size: '2-4 GB', icon: 'fa-hd', service: 'torrent', color: '#ef4444' },
-    { name: '720p HD', size: '1-2 GB', icon: 'fa-play', service: 'stream', color: '#06b6d4' },
-    { name: '480p SD', size: '300-700 MB', icon: 'fa-film', service: 'yts', color: '#8b5cf6' }
-  ];
+// ডাউনলোড সার্ভারে যাওয়া
+function gotoDownload(service) {
+  const slug = document.getElementById('dpTitle') ? document.getElementById('dpTitle').textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+  const url = getDownloadUrl(service, currentMovieId, slug);
+  if (url) {
+    window.open(url, '_blank');
+  }
+}
 
-  qualities.forEach(q => {
-    const btn = document.createElement('button');
-    btn.className = 'dl-quality-btn';
-    btn.style.borderLeft = `4px solid ${q.color}`;
-    btn.innerHTML = `
-      <i class="fa-solid ${q.icon}"></i>
-      <span>${q.name}</span>
-      <span class="q-size">${q.size}</span>
-    `;
-    btn.onclick = () => {
-      const url = getDownloadUrl(q.service, currentMovieId, slug);
-      if (url) {
-        window.open(url, '_blank');
-        closeDownloadModal();
-      }
-    };
-    qualityGrid.appendChild(btn);
-  });
-
-  document.getElementById('downloadModal').classList.add('open');
+// কোয়ালিটি ভিত্তিক ডাউনলোড
+function gotoQuality(service, slug) {
+  const url = getDownloadUrl(service, currentMovieId, slug);
+  if (url) {
+    window.open(url, '_blank');
+  }
 }
 
 // ডাউনলোড লিঙ্ক জেনারেট করার ব্যাকএন্ড লজিক
@@ -1049,8 +1179,8 @@ function getDownloadUrl(service, movieId, slug) {
 
   if (service === 'yts') {
     url = `https://yts.mx/movies/${slug}-${movieId}`;
-  } else if (service === 'torrent') {
-    const title = document.getElementById('detTitle') ? document.getElementById('detTitle').textContent.trim() : 'movie';
+  } else if (service === '1337x') {
+    const title = document.getElementById('dpTitle') ? document.getElementById('dpTitle').textContent.trim() : 'movie';
     url = `https://1337x.to/search/${encodeURIComponent(title)}/1/`;
   } else if (service === 'stream') {
     url = `https://multiembed.mov/directstream.php?video_id=${movieId}&tmdb=1`;
@@ -1058,19 +1188,6 @@ function getDownloadUrl(service, movieId, slug) {
 
   return url;
 }
-
-// ডাউনলোড মডাল বন্ধ করা
-function closeDownloadModal() {
-  document.getElementById('downloadModal').classList.remove('open');
-}
-
-// মডালের বাইরে ক্লিক করলে বন্ধ করা
-window.addEventListener('click', (e) => {
-  const modal = document.getElementById('downloadModal');
-  if (modal && e.target === modal) {
-    closeDownloadModal();
-  }
-});
 
 function goWatch(serverNum) {
   prevView = 'detail';
