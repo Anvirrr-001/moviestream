@@ -1001,8 +1001,57 @@ const STREAM_SERVERS = {
 let currentServerIndex = 0;
 let serverErrorCount = 0;
 
+function autoTestServers() {
+  const servers = STREAM_SERVERS[currentMediaType];
+  const results = [];
+  let completed = 0;
+
+  servers.forEach((srv, idx) => {
+    const testIframe = document.createElement('iframe');
+    testIframe.style.display = 'none';
+    testIframe.src = srv.url(currentMovieId);
+    document.body.appendChild(testIframe);
+
+    const start = Date.now();
+    let done = false;
+
+    const finish = (status) => {
+      if (done) return;
+      done = true;
+      results[idx] = { idx, status, time: Date.now() - start };
+      try { document.body.removeChild(testIframe); } catch(e) {}
+      completed++;
+      if (completed === servers.length) pickBestAndPlay();
+    };
+
+    testIframe.onload = () => finish('ok');
+    testIframe.onerror = () => finish('failed');
+    setTimeout(() => finish('failed'), 6000);
+  });
+}
+
+function pickBestAndPlay() {
+  const servers = STREAM_SERVERS[currentMediaType];
+  const ok = [];
+  for (let i = 0; i < results.length; i++) {
+    if (results[i] && results[i].status === 'ok') ok.push(results[i]);
+  }
+  ok.sort((a, b) => a.time - b.time);
+
+  if (ok.length > 0) {
+    currentServerIndex = ok[0].idx;
+    showToast(`সেরвера পরীক্ষা করা হলো। দ্রুততম: সার্ভার ${currentServerIndex + 1}`);
+  } else {
+    currentServerIndex = 0;
+    showToast('সব সার্ভার ব্যর্থ, প্রথম সার্ভারে চেষ্টা করছি...');
+  }
+
+  const server = servers[currentServerIndex];
+  if (!server) return;
+  loadVideo(server.url(currentMovieId));
+}
+
 function switchServer(serverNum) {
-  // অ্যাক্টিভ বাটন স্টাইল পরিবর্তন
   document.querySelectorAll('.srv-btn').forEach(btn => {
     btn.className = 'srv-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-md text-xs font-bold transition';
   });
@@ -1017,23 +1066,19 @@ function switchServer(serverNum) {
   const servers = STREAM_SERVERS[currentMediaType];
   const server = servers[currentServerIndex];
   if (!server) return;
-
-  const embedUrl = server.url(currentMovieId);
-  loadVideo(embedUrl);
+  loadVideo(server.url(currentMovieId));
 }
 
 function loadVideo(url) {
   const videoPlayer = document.getElementById('videoPlayer');
   if (!videoPlayer) return;
 
-  // আগের এরর লিসেনার সরিয়ে নতুন যোগ করা
   const newPlayer = videoPlayer.cloneNode(true);
   videoPlayer.parentNode.replaceChild(newPlayer, videoPlayer);
 
   newPlayer.src = url;
   newPlayer.onload = () => {
     serverErrorCount = 0;
-    // সার্ভার কাজ করল océano
     const errBox = document.getElementById('serverErrBox');
     if (errBox) errBox.style.display = 'none';
   };
@@ -1041,26 +1086,8 @@ function loadVideo(url) {
   newPlayer.onerror = () => {
     serverErrorCount++;
     showToast('সার্ভার সংযোগ বিচ্ছিন্ন, অটো-সুইচ হচ্ছে...');
-    // অটো-সুইচ 다음 সার্ভারে
     setTimeout(() => {
-      const servers = STREAM_SERVERS[currentMediaType];
-      let nextIdx = (currentServerIndex + 1) % servers.length;
-      let tried = 0;
-      while (tried < servers.length) {
-        if (nextIdx === currentServerIndex) break;
-        currentServerIndex = nextIdx;
-        const srv = servers[currentServerIndex];
-        const btn = document.getElementById(`srv${currentServerIndex + 1}`);
-        if (btn) {
-          document.querySelectorAll('.srv-btn').forEach(b => {
-            b.className = 'srv-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-md text-xs font-bold transition';
-          });
-          btn.className = 'srv-btn bg-accentRed text-white px-3 py-1.5 rounded-md text-xs font-bold shadow transition';
-        }
-        loadVideo(srv.url(currentMovieId));
-        return;
-      }
-      showToast('সব সার্ভার চেষ্টা করা হয়েছে, পরে আবার চেষ্টা করুন');
+      autoTestServers();
     }, 1000);
   };
 }
@@ -1269,7 +1296,7 @@ function goWatch(serverNum) {
   loadWatchRec(currentMovieId, currentMediaType);
   // inject footer
   document.getElementById('watchFooter').innerHTML = FOOTER;
-  switchServer(serverNum);
+  autoTestServers();
   showView('watch');
 }
 
