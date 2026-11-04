@@ -790,10 +790,17 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
               <button class="srv-btn" id="srv2" onclick="switchServer(2)">Server 2 (HD)</button>
               <button class="srv-btn" id="srv3" onclick="switchServer(3)">Server 3 (Multi)</button>
               <button class="srv-btn" id="srv4" onclick="switchServer(4)">Server 4 (Backup)</button>
+              <button class="srv-btn" id="srv5" onclick="switchServer(5)">Server 5 (Mirror)</button>
+              <button class="srv-btn" id="srv6" onclick="switchServer(6)">Server 6 (Extra)</button>
+              <button class="srv-btn" id="srv7" onclick="switchServer(7)">Server 7 (2Embed)</button>
             </div>
           </div>
       <div class="player-wrap">
         <iframe id="videoPlayer" allowfullscreen allow="autoplay;encrypted-media;fullscreen;picture-in-picture" referrerpolicy="no-referrer"></iframe>
+      </div>
+      <div id="serverErrBox" style="display:none;margin-top:10px;padding:12px;background:rgba(229,9,20,.15);border:1px solid var(--acc);border-radius:8px;color:#fff;font-size:13px;display:flex;align-items:center;gap:8px">
+        <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i>
+        <span id="serverErrMsg">সার্ভার সংযোগ বিচ্ছিন্ন হয়েছে। অটো-সুইচ হচ্ছে...</span>
       </div>
     </div>
   </div>
@@ -971,6 +978,29 @@ function goBack() {
 }
 
 // ===== STREAMING SERVERS =====
+const STREAM_SERVERS = {
+  tv: [
+    { name: 'Server 1 (Fast)', url: (id) => `https://vidsrc.to/embed/tv/${id}/1/1` },
+    { name: 'Server 2 (HD)', url: (id) => `https://vidsrc.me/embed/tv?tmdb=${id}&season=1&episode=1` },
+    { name: 'Server 3 (Multi)', url: (id) => `https://embed.su/embed/tv/${id}/1/1` },
+    { name: 'Server 4 (Backup)', url: (id) => `https://vidsrc.cc/v2/embed/tv/${id}/1/1` },
+    { name: 'Server 5 (Mirror)', url: (id) => `https://vidlink.pro/tv/${id}/1/1` },
+    { name: 'Server 6 (Extra)', url: (id) => `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=1&e=1` },
+  ],
+  movie: [
+    { name: 'Server 1 (Fast)', url: (id) => `https://vidsrc.to/embed/movie/${id}` },
+    { name: 'Server 2 (HD)', url: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}` },
+    { name: 'Server 3 (Multi)', url: (id) => `https://embed.su/embed/movie/${id}` },
+    { name: 'Server 4 (Backup)', url: (id) => `https://vidsrc.cc/v2/embed/movie/${id}` },
+    { name: 'Server 5 (Mirror)', url: (id) => `https://vidlink.pro/movie/${id}` },
+    { name: 'Server 6 (Extra)', url: (id) => `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1` },
+    { name: 'Server 7 (2Embed)', url: (id) => `https://www.2embed.cc/embed/${id}` },
+  ]
+};
+
+let currentServerIndex = 0;
+let serverErrorCount = 0;
+
 function switchServer(serverNum) {
   // অ্যাক্টিভ বাটন স্টাইল পরিবর্তন
   document.querySelectorAll('.srv-btn').forEach(btn => {
@@ -981,36 +1011,61 @@ function switchServer(serverNum) {
     activeBtn.className = 'srv-btn bg-accentRed text-white px-3 py-1.5 rounded-md text-xs font-bold shadow transition';
   }
 
-  let embedUrl = '';
+  currentServerIndex = serverNum - 1;
+  serverErrorCount = 0;
 
-  // বর্তমানের সবচেয়ে ভালো ও সচল ৪টি স্ট্রিমিং সার্ভার লিংক
-  if (currentMediaType === 'tv') {
-    // টিভি সিরিজ হলে সিজন ও এপিসোড সাপোর্ট সহ সার্ভার
-    if (serverNum === 1) {
-      embedUrl = `https://vidlink.pro/tv/${currentMovieId}/1/1`;
-    } else if (serverNum === 2) {
-      embedUrl = `https://vidsrc.me/embed/tv?tmdb=${currentMovieId}&season=1&episode=1`;
-    } else if (serverNum === 3) {
-      embedUrl = `https://embed.su/embed/tv/${currentMovieId}/1/1`;
-    } else if (serverNum === 4) {
-      embedUrl = `https://vidsrc.cc/v2/embed/tv/${currentMovieId}/1/1`;
-    }
-  } else {
-    // মুভি হলে নিচের সার্ভারগুলো কাজ করবে
-    if (serverNum === 1) {
-      embedUrl = `https://vidlink.pro/movie/${currentMovieId}`;
-    } else if (serverNum === 2) {
-      embedUrl = `https://vidsrc.me/embed/movie?tmdb=${currentMovieId}`;
-    } else if (serverNum === 3) {
-      embedUrl = `https://embed.su/embed/movie/${currentMovieId}`;
-    } else if (serverNum === 4) {
-      embedUrl = `https://vidsrc.cc/v2/embed/movie/${currentMovieId}`;
-    }
-  }
+  const servers = STREAM_SERVERS[currentMediaType];
+  const server = servers[currentServerIndex];
+  if (!server) return;
 
-  videoPlayer.src = embedUrl;
+  const embedUrl = server.url(currentMovieId);
+  loadVideo(embedUrl);
 }
 
+function loadVideo(url) {
+  const videoPlayer = document.getElementById('videoPlayer');
+  if (!videoPlayer) return;
+
+  // আগের এরর লিসেনার সরিয়ে নতুন যোগ করা
+  const newPlayer = videoPlayer.cloneNode(true);
+  videoPlayer.parentNode.replaceChild(newPlayer, videoPlayer);
+
+  newPlayer.src = url;
+  newPlayer.onload = () => {
+    serverErrorCount = 0;
+    // সার্ভার কাজ করল océano
+    const errBox = document.getElementById('serverErrBox');
+    if (errBox) errBox.style.display = 'none';
+  };
+
+  newPlayer.onerror = () => {
+    serverErrorCount++;
+    showToast('সার্ভার সংযোগ বিচ্ছিন্ন, অটো-সুইচ হচ্ছে...');
+    // অটো-সুইচ 다음 সার্ভারে
+    setTimeout(() => {
+      const servers = STREAM_SERVERS[currentMediaType];
+      let nextIdx = (currentServerIndex + 1) % servers.length;
+      let tried = 0;
+      while (tried < servers.length) {
+        if (nextIdx === currentServerIndex) break;
+        currentServerIndex = nextIdx;
+        const srv = servers[currentServerIndex];
+        const btn = document.getElementById(`srv${currentServerIndex + 1}`);
+        if (btn) {
+          document.querySelectorAll('.srv-btn').forEach(b => {
+            b.className = 'srv-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-md text-xs font-bold transition';
+          });
+          btn.className = 'srv-btn bg-accentRed text-white px-3 py-1.5 rounded-md text-xs font-bold shadow transition';
+        }
+        loadVideo(srv.url(currentMovieId));
+        return;
+      }
+      showToast('সব সার্ভার চেষ্টা করা হয়েছে, পরে আবার চেষ্টা করুন');
+    }, 1000);
+  };
+}
+
+// সার্ভার বাটন HTML আপডেট করার জন্য (সার্ভার বারে স্ট্যাটিক বাটন থাকলেও ডাইনামিক Updated)
 
 // ডাউনলোড পোর্টাল ওপেন করা - মুভির তথ্য সহ ডাউনলোড সার্ভার ও কোয়ালিটি অপশন দেখানো
 function openDownloadPortal(id, type) {
