@@ -1000,57 +1000,91 @@ const STREAM_SERVERS = {
 
 let currentServerIndex = 0;
 let serverErrorCount = 0;
+let isTesting = false;
 
-function autoTestServers() {
+// সব সার্ভার দ্রুত চেক করে দ্রুততম পেলে প্লে করা
+async function autoSelectBestServer() {
+  if (isTesting) return;
+  isTesting = true;
+
   const servers = STREAM_SERVERS[currentMediaType];
-  const results = [];
+  const tested = [];
   let completed = 0;
 
-  servers.forEach((srv, idx) => {
-    const testIframe = document.createElement('iframe');
-    testIframe.style.display = 'none';
-    testIframe.src = srv.url(currentMovieId);
-    document.body.appendChild(testIframe);
-
+  // সব সার্ভার একই সাথে চেক করা
+  await Promise.all(servers.map(async (srv, idx) => {
     const start = Date.now();
-    let done = false;
+    const timeout = setTimeout(() => {
+      if (tested[idx] === undefined) {
+        tested[idx] = { idx, ok: false, time: 9999 };
+        completed++;
+        if (completed === servers.length) finish();
+      }
+    }, 3500);
 
-    const finish = (status) => {
-      if (done) return;
-      done = true;
-      results[idx] = { idx, status, time: Date.now() - start };
-      try { document.body.removeChild(testIframe); } catch(e) {}
-      completed++;
-      if (completed === servers.length) pickBestAndPlay();
+    const img = new Image();
+    img.onload = () => {
+      clearTimeout(timeout);
+      if (tested[idx] === undefined) {
+        tested[idx] = { idx, ok: true, time: Date.now() - start };
+        completed++;
+        if (completed === servers.length) finish();
+      }
     };
+    img.onerror = () => {
+      clearTimeout(timeout);
+      if (tested[idx] === undefined) {
+        tested[idx] = { idx, ok: false, time: 9999 };
+        completed++;
+        if (completed === servers.length) finish();
+      }
+    };
+    img.src = srv.url(currentMovieId) + '?r=' + Date.now();
+  }));
 
-    testIframe.onload = () => finish('ok');
-    testIframe.onerror = () => finish('failed');
-    setTimeout(() => finish('failed'), 6000);
-  });
+  function finish() {
+    isTesting = false;
+    const ok = tested.filter(t => t && t.ok).sort((a, b) => a.time - b.time);
+
+    if (ok.length > 0) {
+      currentServerIndex = ok[0].idx;
+      showToast('Finding best server, please wait a moment. Movie will play now!');
+    } else {
+      currentServerIndex = 0;
+      showToast('Testing all servers, playing on first server...');
+    }
+
+    const server = servers[currentServerIndex];
+    if (!server) return;
+    loadVideo(server.url(currentMovieId));
+  }
 }
 
-function pickBestAndPlay() {
-  const servers = STREAM_SERVERS[currentMediaType];
-  const ok = [];
-  for (let i = 0; i < results.length; i++) {
-    if (results[i] && results[i].status === 'ok') ok.push(results[i]);
-  }
-  ok.sort((a, b) => a.time - b.time);
+// ভিডিও লোড করা
+function loadVideo(url) {
+  const videoPlayer = document.getElementById('videoPlayer');
+  if (!videoPlayer) return;
 
-  if (ok.length > 0) {
-    currentServerIndex = ok[0].idx;
-    showToast(`সেরвера পরীক্ষা করা হলো। দ্রুততম: সার্ভার ${currentServerIndex + 1}`);
-  } else {
-    currentServerIndex = 0;
-    showToast('সব সার্ভার ব্যর্থ, প্রথম সার্ভারে চেষ্টা করছি...');
-  }
+  const newPlayer = videoPlayer.cloneNode(true);
+  videoPlayer.parentNode.replaceChild(newPlayer, videoPlayer);
 
-  const server = servers[currentServerIndex];
-  if (!server) return;
-  loadVideo(server.url(currentMovieId));
+  newPlayer.src = url;
+  newPlayer.onload = () => {
+    serverErrorCount = 0;
+    const errBox = document.getElementById('serverErrBox');
+    if (errBox) errBox.style.display = 'none';
+  };
+
+  newPlayer.onerror = () => {
+    serverErrorCount++;
+    showToast('Server is down, auto-switching please wait...');
+    setTimeout(() => {
+      autoSelectBestServer();
+    }, 1500);
+  };
 }
 
+// ম্যানুয়াল সার্ভার সুইচ (বাটন ক্লিক করলে)
 function switchServer(serverNum) {
   document.querySelectorAll('.srv-btn').forEach(btn => {
     btn.className = 'srv-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-md text-xs font-bold transition';
@@ -1068,31 +1102,6 @@ function switchServer(serverNum) {
   if (!server) return;
   loadVideo(server.url(currentMovieId));
 }
-
-function loadVideo(url) {
-  const videoPlayer = document.getElementById('videoPlayer');
-  if (!videoPlayer) return;
-
-  const newPlayer = videoPlayer.cloneNode(true);
-  videoPlayer.parentNode.replaceChild(newPlayer, videoPlayer);
-
-  newPlayer.src = url;
-  newPlayer.onload = () => {
-    serverErrorCount = 0;
-    const errBox = document.getElementById('serverErrBox');
-    if (errBox) errBox.style.display = 'none';
-  };
-
-  newPlayer.onerror = () => {
-    serverErrorCount++;
-    showToast('সার্ভার সংযোগ বিচ্ছিন্ন, অটো-সুইচ হচ্ছে...');
-    setTimeout(() => {
-      autoTestServers();
-    }, 1000);
-  };
-}
-
-// সার্ভার বাটন HTML আপডেট করার জন্য (সার্ভার বারে স্ট্যাটিক বাটন থাকলেও ডাইনামিক Updated)
 
 // ডাউনলোড পোর্টাল ওপেন করা - মুভির তথ্য সহ ডাউনলোড সার্ভার ও কোয়ালিটি অপশন দেখানো
 function openDownloadPortal(id, type) {
@@ -1296,7 +1305,7 @@ function goWatch(serverNum) {
   loadWatchRec(currentMovieId, currentMediaType);
   // inject footer
   document.getElementById('watchFooter').innerHTML = FOOTER;
-  autoTestServers();
+  autoSelectBestServer();
   showView('watch');
 }
 
