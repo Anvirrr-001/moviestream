@@ -638,7 +638,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
           <div class="dl-row" style="margin-top:0;width:100%">
             <button class="dl-btn dl-4k" onclick="handleDownload('4k')"><i class="fa-solid fa-film"></i> 4K</button>
             <button class="dl-btn dl-hd" onclick="handleDownload('hd')"><i class="fa-solid fa-video"></i> HD</button>
-            <button class="dl-btn dl-premium" onclick="handleDownload('premium')"><i class="fa-solid fa-star"></i> Premium</button>
+            <button class="dl-btn dl-premium" onclick="handleDownload('mega')"><i class="fa-solid fa-star"></i> Premium</button>
           </div>
           <button class="det-icon-btn" id="detListBtn" title="Add to My List"><i class="fa-solid fa-plus"></i></button>
           <button class="det-icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
@@ -763,7 +763,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
           <div class="dl-row" style="margin-top:14px;width:100%">
             <button class="dl-btn dl-4k" onclick="handleDownload('4k')"><i class="fa-solid fa-film"></i> Download 4K</button>
             <button class="dl-btn dl-hd" onclick="handleDownload('hd')"><i class="fa-solid fa-video"></i> Download HD</button>
-            <button class="dl-btn dl-premium" onclick="handleDownload('premium')"><i class="fa-solid fa-star"></i> Download Premium</button>
+            <button class="dl-btn dl-premium" onclick="handleDownload('mega')"><i class="fa-solid fa-star"></i> Download Premium</button>
           </div>
         </div>
     </div>
@@ -934,32 +934,27 @@ function switchServer(serverNum) {
 }
 
 
-// কোয়ালিটি অনুযায়ী মুভি ডাউনলোড হ্যান্ডেল করার ব্যাকএণ্ড লজিক
+// মেগা ড্রাইভ ও ক্লাউড মিরর লিংক হ্যান্ডেল করার ব্যাকএন্ড লজিক
 function handleDownload(quality) {
-  // যদি মুভি সিলেক্ট করা না থাকে
   if (!currentMovieId) {
-    alert('Please select a movie first!');
+    alert('দয়াকরি প্রথনে একটা মুভি সিলেক্ট করুন!');
     return;
   }
 
-  // মুভির টাইটেলকে URL-friendly স্লাগে রূপান্তর করা (টরেন্ট বা সার্চ সাইটের জন্য দরকার হয়)
   const movieTitleElement = document.getElementById('detTitle') || document.getElementById('watchTitle');
   const movieTitle = movieTitleElement ? movieTitleElement.textContent.trim() : 'movie';
   const slug = movieTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   let downloadUrl = '';
 
-  if (quality === '4k') {
-    downloadUrl = `https://yts.mx/movies/${slug}-${currentMovieId}`;
-  } 
-  else if (quality === 'hd') {
+  if (quality === 'mega') {
     downloadUrl = `https://multiembed.mov/directstream.php?video_id=${currentMovieId}&tmdb=1`;
-  } 
-  else if (quality === 'premium') {
-    downloadUrl = `https://vidsrc.to/embed/movie/${currentMovieId}`;
+  } else if (quality === '4k') {
+    downloadUrl = `https://yts.mx/movies/${slug}-${currentMovieId}`;
+  } else if (quality === 'hd') {
+    downloadUrl = `https://vidsrc.xyz/embed/movie/${currentMovieId}`;
   }
 
-  // নতুন ট্যাবে ডাউনলোড পেজ ওপেন হবে
   if (downloadUrl) {
     window.open(downloadUrl, '_blank');
   }
