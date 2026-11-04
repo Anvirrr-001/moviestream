@@ -800,7 +800,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
       </div>
       <div id="serverErrBox" style="display:none;margin-top:10px;padding:12px;background:rgba(229,9,20,.15);border:1px solid var(--acc);border-radius:8px;color:#fff;font-size:13px;display:flex;align-items:center;gap:8px">
         <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i>
-        <span id="serverErrMsg">সার্ভার সংযোগ বিচ্ছিন্ন হয়েছে। অটো-সুইচ হচ্ছে...</span>
+        <span id="serverErrMsg">Server connection lost. Auto-switching...</span>
       </div>
     </div>
   </div>
@@ -1002,7 +1002,7 @@ let currentServerIndex = 0;
 let serverErrorCount = 0;
 let isTesting = false;
 
-// সব সার্ভার দ্রুত চেক করে দ্রুততম পেলে প্লে করা
+// Probe all servers quickly and play the fastest one
 async function autoSelectBestServer() {
   if (isTesting) return;
   isTesting = true;
@@ -1011,7 +1011,7 @@ async function autoSelectBestServer() {
   const tested = [];
   let completed = 0;
 
-  // সব সার্ভার একই সাথে চেক করা
+  // Probe all servers in parallel
   await Promise.all(servers.map(async (srv, idx) => {
     const start = Date.now();
     const timeout = setTimeout(() => {
@@ -1060,7 +1060,7 @@ async function autoSelectBestServer() {
   }
 }
 
-// ভিডিও লোড করা
+// Load video
 function loadVideo(url) {
   const videoPlayer = document.getElementById('videoPlayer');
   if (!videoPlayer) return;
@@ -1084,7 +1084,7 @@ function loadVideo(url) {
   };
 }
 
-// ম্যানুয়াল সার্ভার সুইচ (বাটন ক্লিক করলে)
+// Manual server switch (on button click)
 function switchServer(serverNum) {
   document.querySelectorAll('.srv-btn').forEach(btn => {
     btn.className = 'srv-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-md text-xs font-bold transition';
@@ -1103,10 +1103,10 @@ function switchServer(serverNum) {
   loadVideo(server.url(currentMovieId));
 }
 
-// ডাউনলোড পোর্টাল ওপেন করা - মুভির তথ্য সহ ডাউনলোড সার্ভার ও কোয়ালিটি অপশন দেখানো
+// Open download portal with movie info, download servers and quality options
 function openDownloadPortal(id, type) {
   if (!id) {
-    showToast('দয়াকরি প্রথনে একটা মুভি সিলেক্ট করুন!');
+    showToast('Please select a movie first!');
     return;
   }
 
@@ -1126,20 +1126,20 @@ function openDownloadPortal(id, type) {
   const moviePosterElement = document.getElementById('detPoster') || document.getElementById('watchPosterImg');
   const moviePoster = moviePosterElement ? moviePosterElement.src : '';
   const movieOverviewElement = document.getElementById('detOverview') || document.getElementById('watchOverview');
-  const movieOverview = movieOverviewElement ? movieOverviewElement.textContent.trim() : 'কোনো বিবরণ উপলব্ধ নেই।';
+  const movieOverview = movieOverviewElement ? movieOverviewElement.textContent.trim() : 'No description available.';
   const movieTaglineElement = document.getElementById('detTagline');
   const movieTagline = movieTaglineElement ? movieTaglineElement.textContent.trim() : '';
   const movieGenresElement = document.getElementById('detGenres');
   const movieGenres = movieGenresElement ? movieGenresElement.innerHTML : '';
 
-  // পোর্টালের তথ্য সেট করা
+  // Set portal info
   document.getElementById('dpBackdrop').style.backgroundImage = moviePoster ? `url('${moviePoster}')` : '';
   document.getElementById('dpPoster').src = moviePoster;
   document.getElementById('dpTitle').textContent = movieTitle;
   document.getElementById('dpTagline').textContent = movieTagline || '';
   document.getElementById('dpOverview').textContent = movieOverview;
 
-  // মেটা ডেটা
+  // Meta data
   const metaHtml = `
     <span>${movieRating}/10</span>
     <span>${movieYear}</span>
@@ -1148,40 +1148,40 @@ function openDownloadPortal(id, type) {
   `;
   document.getElementById('dpMeta').innerHTML = metaHtml;
 
-  // ইन्फো গ্রিড
+  // Info grid
   const infoHtml = `
     <div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:12px">
       <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
-        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">রিলিজ</div>
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">Release</div>
         <div style="font-size:14px;font-weight:700;color:#fff">${movieYear}</div>
       </div>
       <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
-        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">রানটাইম</div>
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">Runtime</div>
         <div style="font-size:14px;font-weight:700;color:#fff">${movieRuntime}</div>
       </div>
       <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
-        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">ভাষা</div>
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">Language</div>
         <div style="font-size:14px;font-weight:700;color:#fff">${movieLang}</div>
       </div>
       <div style="background:var(--bg3);padding:12px;border-radius:10px;border:1px solid var(--bdr)">
-        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">রেটিং</div>
+        <div style="font-size:11px;color:var(--mut);text-transform:uppercase">Rating</div>
         <div style="font-size:14px;font-weight:700;color:#fff">${movieRating}/10</div>
       </div>
     </div>
     <div style="background:var(--bg3);padding:14px;border-radius:10px;border:1px solid var(--bdr)">
-      <div style="font-size:11px;color:var(--mut);text-transform:uppercase;margin-bottom:8px">শ্রেণি</div>
+      <div style="font-size:11px;color:var(--mut);text-transform:uppercase;margin-bottom:8px">Genre</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px">${movieGenres}</div>
     </div>
   `;
   document.getElementById('dpInfoGrid').innerHTML = infoHtml;
 
-  // ডাউনলোড সার্ভারগুলো
+  // Download servers
   const serversHtml = `
     <div class="dp-server-card" data-service="yts">
       <div class="dp-server-icon"><i class="fa-solid fa-download"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">YTS Movies</span>
-        <span class="dp-server-desc">সেরা কোয়ালিটি টরেন্ট ডাউনলোড</span>
+        <span class="dp-server-desc">Best quality torrent download</span>
       </div>
       <span class="dp-server-arrow">→</span>
     </div>
@@ -1189,7 +1189,7 @@ function openDownloadPortal(id, type) {
       <div class="dp-server-icon"><i class="fa-solid fa-magnet"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">1337x Torrent</span>
-        <span class="dp-server-desc">বড় টরেন্ট সার্চ পোর্টাল</span>
+        <span class="dp-server-desc">Large torrent search portal</span>
       </div>
       <span class="dp-server-arrow">→</span>
     </div>
@@ -1197,7 +1197,7 @@ function openDownloadPortal(id, type) {
       <div class="dp-server-icon"><i class="fa-solid fa-play"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">MultiEmbed Mirror</span>
-        <span class="dp-server-desc">ডাইরেক্ট স্ট্রিম অথবা ডাউনলোড</span>
+        <span class="dp-server-desc">Direct stream or download</span>
       </div>
       <span class="dp-server-arrow">→</span>
     </div>
@@ -1205,14 +1205,14 @@ function openDownloadPortal(id, type) {
       <div class="dp-server-icon"><i class="fa-solid fa-video"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">YTS 4K</span>
-        <span class="dp-server-desc">আলট্রা এইচডি মুভি ফাইল</span>
+        <span class="dp-server-desc">Ultra HD movie file</span>
       </div>
       <span class="dp-server-arrow">→</span>
     </div>
   `;
   document.getElementById('dpServers').innerHTML = serversHtml;
 
-  // কোয়ালিটি অপশনগুলো
+  // Quality options
   const slug = movieTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   const qualitiesHtml = `
     <div class="dp-quality-card" data-service="yts" data-slug="${slug}">
@@ -1238,7 +1238,7 @@ function openDownloadPortal(id, type) {
   `;
   document.getElementById('dpQualities').innerHTML = qualitiesHtml;
 
-  // ডাইনামিক বাটনের জন্য ইভেন্ট লিসেনার সংযুক্ত করা
+  // Attach event listeners for dynamic buttons
   document.getElementById('dpServers').querySelectorAll('.dp-server-card').forEach(card => {
     card.onclick = () => gotoDownload(card.dataset.service);
   });
@@ -1246,37 +1246,37 @@ function openDownloadPortal(id, type) {
     card.onclick = () => gotoQuality(card.dataset.service, card.dataset.slug || card.dataset.id || '');
   });
 
-  // পোর্টালビュー দেখানো
+  // show portal view
   showView('download');
 }
 
-// ডাউনলোড পোর্টাল বন্ধ করা আর ডিটেইল পেজে ফিরে যাওয়া
+// Close download portal and return to detail page
 function goBackToDetail() {
   showView('detail');
 }
 
-// ডাউনলোড সার্ভারে যাওয়া
+// Go to download server
 function gotoDownload(service) {
   const slug = document.getElementById('dpTitle') ? document.getElementById('dpTitle').textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
   const url = getDownloadUrl(service, currentMovieId, slug);
   if (url) {
     window.open(url, '_blank');
   } else {
-    showToast('ডাউনলোড লিংক পাওয়া যায়নি');
+    showToast('Download link not found');
   }
 }
 
-// কোয়ালিটি ভিত্তিক ডাউনলোড
+// Quality-based download
 function gotoQuality(service, slug) {
   const url = getDownloadUrl(service, currentMovieId, slug);
   if (url) {
     window.open(url, '_blank');
   } else {
-    showToast('ডাউনলোড লিংক পাওয়া যায়নি');
+    showToast('Download link not found');
   }
 }
 
-// ডাউনলোড লিঙ্ক জেনারেট করার ব্যাকএন্ড লজিক
+// Backend logic to generate download link
 function getDownloadUrl(service, movieId, slug) {
   let url = '';
 
