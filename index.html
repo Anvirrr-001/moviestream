@@ -829,7 +829,7 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
   <div class="dp-backdrop" id="dpBackdrop"></div>
   <div class="dp-hero">
     <div class="dp-header">
-      <button class="dp-back-btn" onclick="goBackToDetail()"><i class="fa-solid fa-arrow-left"></i></button>
+      <button class="dp-back-btn" id="dpBackBtn"><i class="fa-solid fa-arrow-left"></i></button>
       <div class="dp-poster-box">
         <img id="dpPoster" src="" alt="">
         <div class="dp-poster-badge" id="dpBadge">HD</div>
@@ -1015,7 +1015,7 @@ function switchServer(serverNum) {
 // ডাউনলোড পোর্টাল ওপেন করা - মুভির তথ্য সহ ডাউনলোড সার্ভার ও কোয়ালিটি অপশন দেখানো
 function openDownloadPortal(id, type) {
   if (!id) {
-    alert('দয়াকরি প্রথনে একটা মুভি সিলেক্ট করুন!');
+    showToast('দয়াকরি প্রথনে একটা মুভি সিলেক্ট করুন!');
     return;
   }
 
@@ -1086,7 +1086,7 @@ function openDownloadPortal(id, type) {
 
   // ডাউনলোড সার্ভারগুলো
   const serversHtml = `
-    <div class="dp-server-card" onclick="gotoDownload('yts')">
+    <div class="dp-server-card" data-service="yts">
       <div class="dp-server-icon"><i class="fa-solid fa-download"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">YTS Movies</span>
@@ -1094,7 +1094,7 @@ function openDownloadPortal(id, type) {
       </div>
       <span class="dp-server-arrow">→</span>
     </div>
-    <div class="dp-server-card" onclick="gotoDownload('1337x')">
+    <div class="dp-server-card" data-service="1337x">
       <div class="dp-server-icon"><i class="fa-solid fa-magnet"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">1337x Torrent</span>
@@ -1102,7 +1102,7 @@ function openDownloadPortal(id, type) {
       </div>
       <span class="dp-server-arrow">→</span>
     </div>
-    <div class="dp-server-card" onclick="gotoDownload('stream')">
+    <div class="dp-server-card" data-service="stream">
       <div class="dp-server-icon"><i class="fa-solid fa-play"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">MultiEmbed Mirror</span>
@@ -1110,7 +1110,7 @@ function openDownloadPortal(id, type) {
       </div>
       <span class="dp-server-arrow">→</span>
     </div>
-    <div class="dp-server-card" onclick="gotoDownload('yts')">
+    <div class="dp-server-card" data-service="yts">
       <div class="dp-server-icon"><i class="fa-solid fa-video"></i></div>
       <div class="dp-server-info">
         <span class="dp-server-name">YTS 4K</span>
@@ -1124,28 +1124,36 @@ function openDownloadPortal(id, type) {
   // কোয়ালিটি অপশনগুলো
   const slug = movieTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   const qualitiesHtml = `
-    <div class="dp-quality-card" onclick="gotoQuality('yts', '${slug}')">
+    <div class="dp-quality-card" data-service="yts" data-slug="${slug}">
       <span class="dp-quality-icon"><i class="fa-solid fa-video"></i></span>
       <span class="dp-quality-name">4K Ultra HD</span>
       <span class="dp-quality-size">8-12 GB • HDR</span>
     </div>
-    <div class="dp-quality-card" onclick="gotoQuality('1337x', '${slug}')">
+    <div class="dp-quality-card" data-service="1337x" data-slug="${slug}">
       <span class="dp-quality-icon"><i class="fa-solid fa-hd"></i></span>
       <span class="dp-quality-name">1080p Full HD</span>
       <span class="dp-quality-size">2-4 GB • BluRay</span>
     </div>
-    <div class="dp-quality-card" onclick="gotoQuality('stream', '${currentMovieId}')">
+    <div class="dp-quality-card" data-service="stream" data-id="${currentMovieId}">
       <span class="dp-quality-icon"><i class="fa-solid fa-play"></i></span>
       <span class="dp-quality-name">720p HD</span>
       <span class="dp-quality-size">1-2 GB • WebDL</span>
     </div>
-    <div class="dp-quality-card" onclick="gotoQuality('yts', '${slug}')">
+    <div class="dp-quality-card" data-service="yts" data-slug="${slug}">
       <span class="dp-quality-icon"><i class="fa-solid fa-film"></i></span>
       <span class="dp-quality-name">480p SD</span>
       <span class="dp-quality-size">300-700 MB • WEB</span>
     </div>
   `;
   document.getElementById('dpQualities').innerHTML = qualitiesHtml;
+
+  // ডাইনামিক বাটনের জন্য ইভেন্ট লিসেনার সংযুক্ত করা
+  document.getElementById('dpServers').querySelectorAll('.dp-server-card').forEach(card => {
+    card.onclick = () => gotoDownload(card.dataset.service);
+  });
+  document.getElementById('dpQualities').querySelectorAll('.dp-quality-card').forEach(card => {
+    card.onclick = () => gotoQuality(card.dataset.service, card.dataset.slug || card.dataset.id || '');
+  });
 
   // পোর্টালビュー দেখানো
   showView('download');
@@ -1162,6 +1170,8 @@ function gotoDownload(service) {
   const url = getDownloadUrl(service, currentMovieId, slug);
   if (url) {
     window.open(url, '_blank');
+  } else {
+    showToast('ডাউনলোড লিংক পাওয়া যায়নি');
   }
 }
 
@@ -1170,6 +1180,8 @@ function gotoQuality(service, slug) {
   const url = getDownloadUrl(service, currentMovieId, slug);
   if (url) {
     window.open(url, '_blank');
+  } else {
+    showToast('ডাউনলোড লিংক পাওয়া যায়নি');
   }
 }
 
