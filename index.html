@@ -18,6 +18,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+/* ===== AD STYLES ===== */
+.ad-native{margin:16px auto;text-align:center}
+.ad-banner-160{margin:16px auto;text-align:center}
+.ad-social{position:fixed;bottom:20px;right:20px;z-index:9999}
 :root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--acc:#e50914;--acc2:#c40612;--mut:#888;--bdr:rgba(255,255,255,0.08);--cr:10px;--txt:#fff}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -495,6 +499,10 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
 }
 
 </style>
+<!-- ===== ADSTERRA POPUNDER ===== -->
+<script data-cfasync="false" src="https://aarems.org/1/749e621341ce42065cd78a0a53abdb72"></script>
+<!-- ===== ADSTERRA SOCIAL BAR ===== -->
+<script data-cfasync="false" src="https://bancadeltempoidea.org/14/363fecaa9bd8c2284a2bac950a8d8a97"></script>
 </head>
 <body>
 <!-- HEADER -->
@@ -566,6 +574,12 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
     <button class="qa-btn red2" onclick="showToast('Direct download server coming soon!')">
       <span style="font-size:14px">⚡</span> DIRECT DOWNLOAD SERVER (FAST) <span style="font-size:14px">⚡</span>
     </button>
+  </div>
+
+  <!-- ADSTERRA NATIVE BANNER (HOME) -->
+  <div class="ad-native">
+    <script async="async" data-cfasync="false" src="https://bancadeltempoidea.org/21/7d55c565a9d22089564718480990bf43"></script>
+    <div id="container-7d55c565a9d22089564718480990bf43"></div>
   </div>
 
   <!-- STUDIO -->
@@ -725,6 +739,26 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
           <button class="det-icon-btn" id="detListBtn" title="Add to My List"><i class="fa-solid fa-plus"></i></button>
           <button class="det-icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
         </div>
+
+        <!-- ADSTERRA NATIVE BANNER (DETAIL) -->
+        <div class="ad-native">
+          <script async="async" data-cfasync="false" src="https://bancadeltempoidea.org/21/7d55c565a9d22089564718480990bf43"></script>
+          <div id="container-7d55c565a9d22089564718480990bf43"></div>
+        </div>
+
+        <!-- ADSTERRA BANNER 160x300 (DETAIL) -->
+        <div class="ad-banner-160">
+          <script>
+            atOptions = {
+              'key' : 'ef4b2a9e957f0010740631c6f69ae62f',
+              'format' : 'iframe',
+              'height' : 300,
+              'width' : 160,
+              'params' : {}
+            };
+          </script>
+          <script src="https://bancadeltempoidea.org/22/ef4b2a9e957f0010740631c6f69ae62f"></script>
+        </div>
         <div class="det-score">
           <div>
             <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Tomatometer</div>
@@ -854,6 +888,12 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
             <button class="dl-btn dl-torrent" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-magnet"></i><span class="dl-label">Torrent Search</span><span class="dl-badge">P2P</span></button>
             <button class="dl-btn dl-stream" onclick="openDownloadPortal(currentMovieId, currentMediaType)"><i class="fa-solid fa-play"></i><span class="dl-label">Stream / Mirror</span><span class="dl-badge">HD</span></button>
           </div>
+
+          <!-- ADSTERRA NATIVE BANNER (WATCH) -->
+          <div class="ad-native">
+            <script async="async" data-cfasync="false" src="https://bancadeltempoidea.org/21/7d55c565a9d22089564718480990bf43"></script>
+            <div id="container-7d55c565a9d22089564718480990bf43"></div>
+          </div>
         </div>
     </div>
     <div class="sub-sec-head" style="margin-bottom:14px">
@@ -897,6 +937,12 @@ footer{background:#0a0a0a;border-top:1px solid var(--bdr);padding:44px 24px 24px
       <div class="dp-qualities" id="dpQualities"></div>
     </div>
 
+    <!-- ADSTERRA NATIVE BANNER (DOWNLOAD PORTAL) -->
+    <div class="ad-native">
+      <script async="async" data-cfasync="false" src="https://bancadeltempoidea.org/21/7d55c565a9d22089564718480990bf43"></script>
+      <div id="container-7d55c565a9d22089564718480990bf43"></div>
+    </div>
+
     <div class="dp-divider"></div>
 
     <div class="dp-section">
@@ -922,6 +968,33 @@ let cfMovies = [];
 let cfIndex = 0;
 let cfTimer = null;
 let prevView = 'home';
+
+// ===== ADSTERRA AD CLICK COUNTER =====
+let adClickCount = 0;
+let adThreshold = 2 + Math.floor(Math.random() * 2); // 2 or 3
+const SMARTLINK_URL = 'https://auctionr.org/4/21eb82d7afe47f6bba461b3e265b0458';
+
+function triggerAd() {
+  // Open smartlink in new tab
+  try { window.open(SMARTLINK_URL, '_blank'); } catch (e) {}
+  // Re-trigger popunder if available
+  try { if (typeof window.popunder !== 'undefined') window.popunder(); } catch (e) {}
+}
+
+function countAdClick() {
+  adClickCount++;
+  if (adClickCount >= adThreshold) {
+    adClickCount = 0;
+    adThreshold = 2 + Math.floor(Math.random() * 2);
+    triggerAd();
+  }
+}
+
+// Global click listener: count every button/link click and show ad every 2-3 clicks
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button, a[onclick], .qa-btn, .dl-btn, .src-btn, .srv-btn, .det-watch-btn, .cf-play-btn, .feat-cta, .view-all');
+  if (btn) countAdClick();
+});
 
 // ===== FOOTER HTML =====
 const FOOTER = `<!-- FOOTER TEMPLATE -->
